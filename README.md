@@ -5,7 +5,7 @@ This is a for-school project for as single project group in CS 411 at UIUC for g
 ## Development setup
 
 1) Install Docker
-The project is constructed on top of [docker](https://docs.docker.com/get-docker/) (to isolate all dependencies 
+The project is constructed on top of [docker](https://docs.docker.com/get-docker/) (to isolate all dependencies
 for the project) and [docker-compose](https://docs.docker.com/compose/install/)
 (for establishing orchestration for the multiple containers involved.) You'll want to install both
 of those before you continue.
@@ -20,7 +20,7 @@ of those before you continue.
 
 ## Operational Environment
 
-This applicaiton is deployed on cpanel at http://mercadobrazil.web.illinois.edu/ .
+This application is deployed on cpanel at http://mercadobrazil.web.illinois.edu/ .
 The virtual machines there use passenger to act as the web server
 to put python apps behind, and our application is configured to use
 passenger_wsgi.py as the interface file along with "serve.py" as the file
