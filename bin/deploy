@@ -3,6 +3,6 @@
 ssh cpanel << DEPLOY
  cd /home/mercadobrazil/mercado-brasileiro
  git pull --ff-only origin master
- touch tmp/restart
+ touch tmp/restart.txt
  echo "DONE"
 DEPLOY
