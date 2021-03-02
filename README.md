@@ -62,3 +62,5 @@ git pull origin master
 cd ~/mercado-brasileiro
 touch tmp/restart.txt
 ```
+
+A deploy script has been added to bin/deploy that does exactly this.
