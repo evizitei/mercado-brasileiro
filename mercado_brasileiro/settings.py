@@ -25,7 +25,10 @@ SECRET_KEY = 'i8$o)w^k=ff-1=i0xv$ok4iiu_n40_u8-zsw(&9^g#p1&-yqzs'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['mercado.docker', 'localhost']
+ALLOWED_HOSTS = [
+    'mercado.docker', 'localhost',
+    'mercadobrazil.web.illinois.edu'
+]
 
 
 # Application definition
