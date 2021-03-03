@@ -39,6 +39,19 @@ Host cpanel
   IdentityFile ~/.ssh/[your key you generated and authorized]
 ```
 
+Settings are bootstrapped into the app via the settings.py file
+but not all settings can be put in the repo
+(things like passwords and keys should differ by environment
+and should not be exposed to github).  We use a ".env" file
+which is NOT committed to the repository.
+
+IF YOU ARE DEVELOPING LOCALLY, PUT WHAT IS IN THE ".env_example"
+file into a ".env" file in the same directory as "settings.py"
+
+In production, there is a .env file on the server that has
+all the secrets in it which is not in the repo so it can have
+it's own settings.
+
 #### Deployment
 
 since we're operating on a single server for this project, the deploy process is 
