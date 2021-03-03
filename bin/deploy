@@ -3,6 +3,9 @@
 ssh cpanel << DEPLOY
  cd /home/mercadobrazil/mercado-brasileiro
  git pull --ff-only origin master
+ source /home/mercadobrazil/virtualenv/mercado-brasileiro/3.8/bin/activate
+ cd /home/mercadobrazil/mercado-brasileiro
+ pip install -r requirements.txt
  touch tmp/restart.txt
  echo "DONE"
 DEPLOY
