@@ -75,32 +75,48 @@ django.setup()
 
 
 from mercado_brasileiro.models import Customer
+from mercado_brasileiro.models import GeoLocation
 csv_dir = extract_dir
-def import_customers():
-  if Customer.objects.count() > 0:
-    print("CANNOT IMPORT CUSTOMERS, TABLE ALREADY POPULATED!")
+
+def import_model(model_class, filename, leading_column_name):
+  if model_class.objects.count() > 0:
+    print("CANNOT IMPORT ", model_class, ", TABLE ALREADY POPULATED!")
     return
-  print("importing customers...")
-  filename = csv_dir + "/olist_customers_dataset.csv"
+  print("importing ", model_class, "...")
   with open(filename) as f:
     reader = csv.reader(f)
     row_count = 0
     for row in reader:
-      if row[0] == "customer_id":
+      if row[0] == leading_column_name:
         continue
-      _, created = Customer.objects.get_or_create(
-        uuid=row[0],
-        unique_id=row[1],
-        zip_code_prefix=row[2],
-        city=row[3],
-        state=row[4]
-      )
+      yield row
       row_count = row_count + 1
       if row_count % 1000 == 0:
         print("...imported ", row_count, " records...")
-  print("...Done! Customer Count: ", Customer.objects.count())
+  print("...Done! ", model_class, " Count: ", model_class.objects.count())
+
+def import_customers():
+  for row in import_model(Customer, csv_dir + "/olist_customers_dataset.csv", "customer_id"):
+    _, created = Customer.objects.get_or_create(
+      uuid=row[0],
+      unique_id=row[1],
+      zip_code_prefix=row[2],
+      city=row[3],
+      state=row[4]
+    )
+
+def import_geolocations():
+  for row in import_model(GeoLocation, csv_dir + "/olist_geolocation_dataset.csv", "geolocation_zip_code_prefix"):
+    _, created = GeoLocation.objects.get_or_create(
+      zip_code_prefix=row[0],
+      lat=float(row[1]),
+      lng=float(row[2]),
+      city=row[3],
+      state=row[4]
+    )
 
 import_customers()
+import_geolocations()
 
 
-print("DATABASE CREDENTIALS: ", env('DATABASE_NAME'))
+print("Script Complete")

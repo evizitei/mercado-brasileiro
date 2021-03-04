@@ -9,7 +9,7 @@ class Customer(models.Model):
 
 class GeoLocation(models.Model):
   zip_code_prefix = models.CharField(max_length=20)
-  lat = models.FloatField
-  lng = models.FloatField
+  lat = models.FloatField()
+  lng = models.FloatField()
   city = models.CharField(max_length=200)
   state = models.CharField(max_length=30)
