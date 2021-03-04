@@ -93,9 +93,17 @@ In production, there is a .env file on the server that has
 all the secrets in it which is not in the repo so it can have
 it's own settings.
 
+Using the information in that file, you can connect to the database
+as the app user for example:
+
+```bash
+ psql -U mercadobrazil_app -d mercadobrazil_prod -h 127.0.0.1
+```
+(use the password specified in the .env file)
+
 #### Deployment
 
-since we're operating on a single server for this project, the deploy process is 
+since we're operating on a single server for this project, the deploy process is
 pretty straightforward.
 
 

@@ -97,23 +97,25 @@ def import_model(model_class, filename, leading_column_name):
 
 def import_customers():
   for row in import_model(Customer, csv_dir + "/olist_customers_dataset.csv", "customer_id"):
-    _, created = Customer.objects.get_or_create(
+    new_object = Customer(
       uuid=row[0],
       unique_id=row[1],
       zip_code_prefix=row[2],
       city=row[3],
       state=row[4]
     )
+    new_object.save(force_insert=True)
 
 def import_geolocations():
   for row in import_model(GeoLocation, csv_dir + "/olist_geolocation_dataset.csv", "geolocation_zip_code_prefix"):
-    _, created = GeoLocation.objects.get_or_create(
+    new_object = GeoLocation(
       zip_code_prefix=row[0],
       lat=float(row[1]),
       lng=float(row[2]),
       city=row[3],
       state=row[4]
     )
+    new_object.save(force_insert=True)
 
 import_customers()
 import_geolocations()
