@@ -30,7 +30,7 @@ and import data:
 ### Ongoing State Changes
 
 Anytime you add a new dependency to requirements.txt,
-don't forget you need to re-build the container to have it 
+don't forget you need to re-build the container to have it
 installed.
 
 ```bash

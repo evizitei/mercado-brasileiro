@@ -13,3 +13,12 @@ class GeoLocation(models.Model):
   lng = models.FloatField()
   city = models.CharField(max_length=200)
   state = models.CharField(max_length=30)
+
+class OrderItem(models.Model):
+  order_uuid = models.CharField(max_length=50)
+  order_item_id = models.IntegerField()
+  product_uuid = models.CharField(max_length=50)
+  seller_uuid = models.CharField(max_length=50)
+  shipping_limit_date = models.DateTimeField()
+  price = models.DecimalField(max_digits=12, decimal_places=2)
+  freight_value= models.DecimalField(max_digits=12, decimal_places=2)

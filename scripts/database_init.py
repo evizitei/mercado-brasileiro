@@ -1,4 +1,7 @@
 import csv
+from datetime import datetime
+from django.utils import timezone
+from decimal import *
 import environ
 import os
 import psycopg2
@@ -76,6 +79,7 @@ django.setup()
 
 from mercado_brasileiro.models import Customer
 from mercado_brasileiro.models import GeoLocation
+from mercado_brasileiro.models import OrderItem
 csv_dir = extract_dir
 
 def import_model(model_class, filename, leading_column_name):
@@ -117,8 +121,22 @@ def import_geolocations():
     )
     new_object.save(force_insert=True)
 
+def import_order_items():
+  for row in import_model(OrderItem, csv_dir + "/olist_order_items_dataset.csv", "order_id"):
+    new_object = OrderItem(
+      order_uuid=row[0],
+      order_item_id=int(row[1]),
+      product_uuid=row[2],
+      seller_uuid=row[3],
+      shipping_limit_date=timezone.make_aware(datetime.strptime(row[4], "%Y-%m-%d %H:%M:%S")),
+      price=Decimal(row[5]),
+      freight_value=Decimal(row[6])
+    )
+    new_object.save(force_insert=True)
+
 import_customers()
 import_geolocations()
+import_order_items()
 
 
 print("Script Complete")
