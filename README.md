@@ -16,10 +16,40 @@ of those before you continue.
 3) bootstrap your env vars:PUT WHAT IS IN THE ".env_example"
 file in "mercado_brasileiro" directory into a ".env" file in the same directory as "settings.py".
 
-4) run the initial migrations to bootstrap your db:
-`docker-compose run --rm web python manage.py migrate`
+3) get your data archive from the olist dataset in place
+for the db bootstrap in data/olist.zip.
+
+4) run the database_init script, which will unzip
+your data archive, create your db, apply migrations,
+and import data:
+`docker-compose run --rm web python scripts/database_init.py`
 
 5) Start the app to make sure it works: `docker-compose up`
+
+
+### Ongoing State Changes
+
+Anytime you add a new dependency to requirements.txt,
+don't forget you need to re-build the container to have it 
+installed.
+
+```bash
+docker-compose build web
+```
+
+Anytime you make a model change (models.py), you need to generate a new
+migration for the change against the db, which
+can be done from the root directory of the project:
+
+```bash
+python manage.py makemigrations mercado_brasileiro
+```
+
+And then you can run migrations to catch your curent
+
+```bash
+python manage.py migrate
+```
 
 ## Operational Environment
 
@@ -80,3 +110,34 @@ touch tmp/restart.txt
 ```
 
 A deploy script has been added to bin/deploy that does exactly this.
+
+#### Database Bootstrapping
+
+Whether locally or on the server, we're basing our application
+on the dataset here
+(https://www.kaggle.com/olistbr/brazilian-ecommerce).
+This means we need to get that data into our database to do
+anything.  Putting all the data in the repo would be
+overkill, so there is a utility in "scripts/database_init.py"
+that takes care of forcing all this data into tables
+in the database.  Make sure to download the zip file for
+the dataset and put it in "data/olist.zip". Then:
+
+```bash
+python scripts/database_init.py
+```
+
+from the root directory of this project (either in your local
+docker container shell or on the server) and the script will
+open the archive, create tables as necessary, and import
+data.
+
+postgres command line tools are installed in the 
+docker container, so you can check on the db state
+from the command line at any time using psql:
+
+```bash
+psql -d mercadobrazil_dev -h db -U postgres
+```
+
+(password is "sekret", as configured in docker-compose)

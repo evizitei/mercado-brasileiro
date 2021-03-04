@@ -7,3 +7,7 @@ __pycache__/
 
 # config files
 .env
+.DS_Store
+
+#data files
+data/
