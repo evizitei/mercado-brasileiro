@@ -80,6 +80,8 @@ django.setup()
 from mercado_brasileiro.models import Customer
 from mercado_brasileiro.models import GeoLocation
 from mercado_brasileiro.models import OrderItem
+from mercado_brasileiro.models import OrderPayment
+
 csv_dir = extract_dir
 
 def import_model(model_class, filename, leading_column_name):
@@ -134,9 +136,22 @@ def import_order_items():
     )
     new_object.save(force_insert=True)
 
+def import_order_payments():
+  for row in import_model(OrderPayment, csv_dir + "/olist_order_payments_dataset.csv", "order_id"):
+    new_object = OrderPayment(
+      order_uuid=row[0],
+      payment_sequential=int(row[1]),
+      payment_type=row[2],
+      payment_installments=int(row[3]),
+      payment_value=Decimal(row[4])
+    )
+    new_object.save(force_insert=True)
+
+
 import_customers()
 import_geolocations()
 import_order_items()
+import_order_payments()
 
 
 print("Script Complete")

@@ -22,3 +22,10 @@ class OrderItem(models.Model):
   shipping_limit_date = models.DateTimeField()
   price = models.DecimalField(max_digits=12, decimal_places=2)
   freight_value= models.DecimalField(max_digits=12, decimal_places=2)
+
+class OrderPayment(models.Model):
+  order_uuid = models.CharField(max_length=50)
+  payment_sequential = models.IntegerField()
+  payment_type = models.CharField(max_length=50)
+  payment_installments = models.IntegerField()
+  payment_value = models.DecimalField(max_digits=12, decimal_places=2)
