@@ -78,6 +78,14 @@ but not all settings can be put in the repo
 and should not be exposed to github).  We use a ".env" file
 which is NOT committed to the repository.
 
+there is a virtual environment on the server for python
+and dependencies, make sure you're using it for anything
+python related by running:
+
+```bash
+source /home/mercadobrazil/virtualenv/mercado-brasileiro/3.8/bin/activate
+```
+
 IF YOU ARE DEVELOPING LOCALLY, PUT WHAT IS IN THE ".env_example"
 file into a ".env" file in the same directory as "settings.py"
 
