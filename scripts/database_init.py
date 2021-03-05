@@ -85,6 +85,7 @@ from mercado_brasileiro.models import OrderReview
 from mercado_brasileiro.models import Order
 from mercado_brasileiro.models import Product
 from mercado_brasileiro.models import Seller
+from mercado_brasileiro.models import CategoryNameTranslation
 
 csv_dir = extract_dir
 
@@ -218,6 +219,14 @@ def import_sellers():
     )
     new_object.save(force_insert=True)
 
+def import_category_name_translations():
+  for row in import_model(CategoryNameTranslation, csv_dir + "/product_category_name_translation.csv", "product_category_name"):
+    new_object = CategoryNameTranslation(
+      category_name=row[0],
+      category_name_english=row[1]
+    )
+    new_object.save(force_insert=True)
+
 import_customers()
 import_geolocations()
 import_order_items()
@@ -226,6 +235,7 @@ import_order_reviews()
 import_orders()
 import_products()
 import_sellers()
+import_category_name_translations()
 
 
 print("Database Initialization Complete")

@@ -65,3 +65,7 @@ class Seller(models.Model):
   zip_code_prefix=models.CharField(max_length=12)
   city=models.CharField(max_length=50)
   state=models.CharField(max_length=30)
+
+class CategoryNameTranslation(models.Model):
+  category_name=models.CharField(max_length=200)
+  category_name_english=models.CharField(max_length=200)
