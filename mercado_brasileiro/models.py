@@ -59,3 +59,9 @@ class Product(models.Model):
   length_in_cm=models.FloatField(default=None, blank=True, null=True)
   height_in_cm=models.FloatField(default=None, blank=True, null=True)
   width_in_cm=models.FloatField(default=None, blank=True, null=True)
+
+class Seller(models.Model):
+  seller_uuid=models.CharField(max_length=50)
+  zip_code_prefix=models.CharField(max_length=12)
+  city=models.CharField(max_length=50)
+  state=models.CharField(max_length=30)

@@ -84,6 +84,7 @@ from mercado_brasileiro.models import OrderPayment
 from mercado_brasileiro.models import OrderReview
 from mercado_brasileiro.models import Order
 from mercado_brasileiro.models import Product
+from mercado_brasileiro.models import Seller
 
 csv_dir = extract_dir
 
@@ -207,6 +208,16 @@ def import_products():
     )
     new_object.save(force_insert=True)
 
+def import_sellers():
+  for row in import_model(Seller, csv_dir + "/olist_sellers_dataset.csv", "seller_id"):
+    new_object = Seller(
+      seller_uuid=row[0],
+      zip_code_prefix=row[1],
+      city=row[2],
+      state=row[3]
+    )
+    new_object.save(force_insert=True)
+
 import_customers()
 import_geolocations()
 import_order_items()
@@ -214,6 +225,7 @@ import_order_payments()
 import_order_reviews()
 import_orders()
 import_products()
+import_sellers()
 
 
-print("Script Complete")
+print("Database Initialization Complete")
