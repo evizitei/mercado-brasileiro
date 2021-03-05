@@ -38,3 +38,13 @@ class OrderReview(models.Model):
   review_comment_message=models.TextField(default=None, blank=True, null=True)
   review_creation_date=models.DateTimeField()
   review_answer_timestamp=models.DateTimeField()
+
+class Order(models.Model):
+  order_uuid=models.CharField(max_length=50)
+  customer_uuid=models.CharField(max_length=50)
+  status=models.CharField(max_length=50)
+  purchase_timestamp=models.DateTimeField()
+  approved_at=models.DateTimeField(default=None, blank=True, null=True)
+  carrier_date=models.DateTimeField(default=None, blank=True, null=True)
+  delivered_customer_date=models.DateTimeField(default=None, blank=True, null=True)
+  estimated_delivery_date=models.DateTimeField()

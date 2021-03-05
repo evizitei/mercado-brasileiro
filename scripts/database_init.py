@@ -82,6 +82,7 @@ from mercado_brasileiro.models import GeoLocation
 from mercado_brasileiro.models import OrderItem
 from mercado_brasileiro.models import OrderPayment
 from mercado_brasileiro.models import OrderReview
+from mercado_brasileiro.models import Order
 
 csv_dir = extract_dir
 
@@ -101,6 +102,11 @@ def import_model(model_class, filename, leading_column_name):
       if row_count % 1000 == 0:
         print("...imported ", row_count, " records...")
   print("...Done! ", model_class, " Count: ", model_class.objects.count())
+
+def parse_datetime(string):
+  if string is None or string == '':
+    return None
+  return timezone.make_aware(datetime.strptime(string, "%Y-%m-%d %H:%M:%S"))
 
 def import_customers():
   for row in import_model(Customer, csv_dir + "/olist_customers_dataset.csv", "customer_id"):
@@ -131,7 +137,7 @@ def import_order_items():
       order_item_id=int(row[1]),
       product_uuid=row[2],
       seller_uuid=row[3],
-      shipping_limit_date=timezone.make_aware(datetime.strptime(row[4], "%Y-%m-%d %H:%M:%S")),
+      shipping_limit_date=parse_datetime(row[4]),
       price=Decimal(row[5]),
       freight_value=Decimal(row[6])
     )
@@ -156,8 +162,22 @@ def import_order_reviews():
       review_score=int(row[2]),
       review_comment_title=row[3],
       review_comment_message=row[4],
-      review_creation_date=timezone.make_aware(datetime.strptime(row[5], "%Y-%m-%d %H:%M:%S")),
-      review_answer_timestamp=timezone.make_aware(datetime.strptime(row[6], "%Y-%m-%d %H:%M:%S"))
+      review_creation_date=parse_datetime(row[5]),
+      review_answer_timestamp=parse_datetime(row[6])
+    )
+    new_object.save(force_insert=True)
+
+def import_orders():
+  for row in import_model(Order, csv_dir + "/olist_orders_dataset.csv", "order_id"):
+    new_object = Order(
+      order_uuid=row[0],
+      customer_uuid=row[1],
+      status=row[2],
+      purchase_timestamp=parse_datetime(row[3]),
+      approved_at=parse_datetime(row[4]),
+      carrier_date=parse_datetime(row[5]),
+      delivered_customer_date=parse_datetime(row[6]),
+      estimated_delivery_date=parse_datetime(row[7])
     )
     new_object.save(force_insert=True)
 
@@ -166,6 +186,7 @@ import_geolocations()
 import_order_items()
 import_order_payments()
 import_order_reviews()
+import_orders()
 
 
 print("Script Complete")
