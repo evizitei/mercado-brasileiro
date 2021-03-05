@@ -48,3 +48,14 @@ class Order(models.Model):
   carrier_date=models.DateTimeField(default=None, blank=True, null=True)
   delivered_customer_date=models.DateTimeField(default=None, blank=True, null=True)
   estimated_delivery_date=models.DateTimeField()
+
+class Product(models.Model):
+  product_uuid=models.CharField(max_length=50)
+  category_name=models.CharField(max_length=50)
+  name_length=models.IntegerField(default=None, blank=True, null=True)
+  description_length=models.IntegerField(default=None, blank=True, null=True)
+  photos_count=models.IntegerField(default=None, blank=True, null=True)
+  weight_in_grams=models.FloatField(default=None, blank=True, null=True)
+  length_in_cm=models.FloatField(default=None, blank=True, null=True)
+  height_in_cm=models.FloatField(default=None, blank=True, null=True)
+  width_in_cm=models.FloatField(default=None, blank=True, null=True)

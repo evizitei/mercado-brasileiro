@@ -83,6 +83,7 @@ from mercado_brasileiro.models import OrderItem
 from mercado_brasileiro.models import OrderPayment
 from mercado_brasileiro.models import OrderReview
 from mercado_brasileiro.models import Order
+from mercado_brasileiro.models import Product
 
 csv_dir = extract_dir
 
@@ -107,6 +108,16 @@ def parse_datetime(string):
   if string is None or string == '':
     return None
   return timezone.make_aware(datetime.strptime(string, "%Y-%m-%d %H:%M:%S"))
+
+def nullable_int(value):
+  if value is None or value == '':
+    return None
+  return int(value)
+
+def nullable_float(value):
+  if value is None or value == '':
+    return None
+  return float(value)
 
 def import_customers():
   for row in import_model(Customer, csv_dir + "/olist_customers_dataset.csv", "customer_id"):
@@ -181,12 +192,28 @@ def import_orders():
     )
     new_object.save(force_insert=True)
 
+def import_products():
+  for row in import_model(Product, csv_dir + "/olist_products_dataset.csv", "product_id"):
+    new_object = Product(
+      product_uuid=row[0],
+      category_name=row[1],
+      name_length=nullable_int(row[2]),
+      description_length=nullable_int(row[3]),
+      photos_count=nullable_int(row[4]),
+      weight_in_grams=nullable_float(row[5]),
+      length_in_cm=nullable_float(row[6]),
+      height_in_cm=nullable_float(row[7]),
+      width_in_cm=nullable_float(row[8]),
+    )
+    new_object.save(force_insert=True)
+
 import_customers()
 import_geolocations()
 import_order_items()
 import_order_payments()
 import_order_reviews()
 import_orders()
+import_products()
 
 
 print("Script Complete")
