@@ -29,3 +29,12 @@ class OrderPayment(models.Model):
   payment_type = models.CharField(max_length=50)
   payment_installments = models.IntegerField()
   payment_value = models.DecimalField(max_digits=12, decimal_places=2)
+
+class OrderReview(models.Model):
+  review_uuid = models.CharField(max_length=50)
+  order_uuid = models.CharField(max_length=50)
+  review_score= models.IntegerField()
+  review_comment_title=models.TextField(default=None, blank=True, null=True)
+  review_comment_message=models.TextField(default=None, blank=True, null=True)
+  review_creation_date=models.DateTimeField()
+  review_answer_timestamp=models.DateTimeField()

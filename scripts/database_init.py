@@ -81,6 +81,7 @@ from mercado_brasileiro.models import Customer
 from mercado_brasileiro.models import GeoLocation
 from mercado_brasileiro.models import OrderItem
 from mercado_brasileiro.models import OrderPayment
+from mercado_brasileiro.models import OrderReview
 
 csv_dir = extract_dir
 
@@ -147,11 +148,24 @@ def import_order_payments():
     )
     new_object.save(force_insert=True)
 
+def import_order_reviews():
+  for row in import_model(OrderReview, csv_dir + "/olist_order_reviews_dataset.csv", "review_id"):
+    new_object = OrderReview(
+      review_uuid=row[0],
+      order_uuid=row[1],
+      review_score=int(row[2]),
+      review_comment_title=row[3],
+      review_comment_message=row[4],
+      review_creation_date=timezone.make_aware(datetime.strptime(row[5], "%Y-%m-%d %H:%M:%S")),
+      review_answer_timestamp=timezone.make_aware(datetime.strptime(row[6], "%Y-%m-%d %H:%M:%S"))
+    )
+    new_object.save(force_insert=True)
 
 import_customers()
 import_geolocations()
 import_order_items()
 import_order_payments()
+import_order_reviews()
 
 
 print("Script Complete")
