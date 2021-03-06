@@ -5,6 +5,7 @@ from decimal import *
 import environ
 import os
 import psycopg2
+import pymongo
 import sys
 import zipfile
 
@@ -238,4 +239,11 @@ import_sellers()
 import_category_name_translations()
 
 
-print("Database Initialization Complete")
+print("Postgres Database Initialization Complete")
+
+print("Connecting to mongodb...")
+client = pymongo.MongoClient(env('MONGO_CONN_STRING'))
+mdb = client[env('MONGO_DB_NAME')]
+analytics_collection = mdb.analytics
+analytics_collection.insert_one({"Test": "Document"})
+print("...conn established and test document inserted!")
