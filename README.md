@@ -157,3 +157,11 @@ psql -d mercadobrazil_dev -h db -U postgres
 ```
 
 (password is "sekret", as configured in docker-compose)
+
+MongoDB is also installed in the docker container,
+so you can talk to the mongo database container
+by getting a shell in your "web" container and running:
+
+```bash
+mongo --host=mongo
+```
