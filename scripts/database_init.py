@@ -77,7 +77,7 @@ from mercado_brasileiro import settings as app_settings
 os.environ["DJANGO_SETTINGS_MODULE"] = "mercado_brasileiro.settings"
 django.setup()
 
-
+# Database Import from Kaggle Dataset
 from mercado_brasileiro.models import Customer
 from mercado_brasileiro.models import GeoLocation
 from mercado_brasileiro.models import OrderItem
@@ -241,9 +241,24 @@ import_category_name_translations()
 
 print("Postgres Database Initialization Complete")
 
+# MONGODB Initialization
 print("Connecting to mongodb...")
 client = pymongo.MongoClient(env('MONGO_CONN_STRING'))
 mdb = client[env('MONGO_DB_NAME')]
 analytics_collection = mdb.analytics
-analytics_collection.insert_one({"Test": "Document"})
-print("...conn established and test document inserted!")
+if analytics_collection.count({}) > 0:
+  print("...conn established.  Mongo already has records, looks fine.")
+else:
+  analytics_collection.insert_one({"Test": "Document"})
+  print("...conn established and test document inserted!")
+
+# making sure we have a SUPER user for admin
+from django.contrib.auth.models import User
+if User.objects.count() <= 0:
+  print("creating root admin user...")
+  User.objects.create_superuser(env('ROOT_ADMIN_USER_NAME'), env('ROOT_ADMIN_USER_EMAIL'), env('ROOT_ADMIN_USER_PASSWORD'))
+  print("..created root admin.")
+else:
+  print("admin users already exist.")
+
+print("DONE!")

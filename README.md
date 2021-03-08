@@ -21,7 +21,7 @@ for the db bootstrap in data/olist.zip.
 
 4) run the database_init script, which will unzip
 your data archive, create your db, apply migrations,
-and import data:
+ import data, and create the root admin user:
 `docker-compose run --rm web python scripts/database_init.py`
 
 5) Start the app to make sure it works: `docker-compose up`
@@ -145,8 +145,11 @@ python scripts/database_init.py
 
 from the root directory of this project (either in your local
 docker container shell or on the server) and the script will
-open the archive, create tables as necessary, and import
-data.
+open the archive, create tables as necessary, import
+data, and create your root admin user.
+
+This process is idempotent, you can run it multiple
+times and it will only do the work that it detects is not done.
 
 postgres command line tools are installed in the 
 docker container, so you can check on the db state
@@ -165,3 +168,19 @@ by getting a shell in your "web" container and running:
 ```bash
 mongo --host=mongo
 ```
+
+### Auth and Admin
+The Django app has an admin area built into it as part of the django
+framework, with tables that are namespaced under "auth" in the schema.
+
+The database init script will create one root user, but if you want
+to have another admin user for yourself (which you should!) you can
+create one from the shell with:
+
+```bash
+python manage.py createsuperuser
+```
+
+when your super user is created, you should be able to login
+with your superuser username and password at the "/admin"
+path on your server hostname.
