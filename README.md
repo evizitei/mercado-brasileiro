@@ -183,4 +183,5 @@ python manage.py createsuperuser
 
 when your super user is created, you should be able to login
 with your superuser username and password at the "/admin"
-path on your server hostname.
+path on your server hostname.  This provides access
+to administration for users and groups.
