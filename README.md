@@ -180,6 +180,14 @@ create one from the shell with:
 ```bash
 python manage.py createsuperuser
 ```
+REMEMBER: ^ if you're on the production server you need
+to have activated the python virtualenv in order to run
+python commands with our dependencies successfully!
+
+```bash
+source /home/mercadobrazil/virtualenv/mercado-brasileiro/3.8/bin/activate
+python manage.py createsuperuser
+```
 
 when your super user is created, you should be able to login
 with your superuser username and password at the "/admin"
