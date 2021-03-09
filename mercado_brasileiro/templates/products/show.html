@@ -1,11 +1,21 @@
-{% if product %}
-  <h2>Product {{ product.id }} </h2>
-  <p><strong>UUID:</strong> {{ product.product_uuid }}</p>
-  <p><strong>Category Name:</strong> {{ product.category_name }}</p>
-  <p><strong>Length (cm):</strong> {{ product.length_in_cm }}</p>
-  <p><strong>Width (cm):</strong> {{ product.width_in_cm }}</p>
-  <p><strong>Height (cm):</strong> {{ product.height_in_cm }}</p>
-{% else %}
-  <p>Product not found...</p>
-{% endif %}
-<a href="/products">Back to Index</a>
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="row gy-5">
+    {% if product %}
+      <div class="card" style="width: 24rem;">
+        <div class="card-body">
+          <h5 class="card-title">Product {{ product.id }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted"><strong>UUID:</strong> {{ product.product_uuid }}</h6>
+          <p class="card-text">
+            In the {{ product.category_name }} category, dimensions:
+            {{ product.length_in_cm }} x {{ product.width_in_cm }} x {{ product.height_in_cm }} (cm)
+          </p>
+        </div>
+      </div>
+    {% else %}
+      <p>Product not found...</p>
+    {% endif %}
+    <a href="/products">Back to Index</a>
+  </div>
+{% endblock %}
