@@ -1,7 +1,9 @@
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.template import loader
 
 from .models import Product
+from .forms import RegistrationForm
 
 def index(request):
     return HttpResponse("Hello, world. You're at the mercado-brasileiro app.")
@@ -17,3 +19,19 @@ def products_show(request, product_id):
     template = loader.get_template('products/show.html')
     context = { 'product': product }
     return HttpResponse(template.render(context, request))
+
+
+def sellers_register(request):
+    template = loader.get_template('sellers/register.html')
+    form = RegistrationForm()
+    context = {'form': form}
+    return HttpResponse(template.render(context, request))
+
+def sellers_attach_user(request):
+    # Create user and save to the database
+    user = User.objects.create_user('myusername', 'myemail@crazymail.com', 'mypassword')
+
+    # Update fields and then save again
+    user.first_name = 'John'
+    user.last_name = 'Citizen'
+    user.save()

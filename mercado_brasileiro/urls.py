@@ -21,5 +21,7 @@ urlpatterns = [
     path('', views.products_index, name='index'),
     path('admin/', admin.site.urls),
     path('products/', views.products_index, name="products_index"),
-    path('products/<int:product_id>', views.products_show, name="product_show")
+    path('products/<int:product_id>', views.products_show, name="product_show"),
+    path('sellers/register', views.sellers_register, name="sellers_register"),
+    path('sellers/attach', views.sellers_attach_user, name="sellers_attach_user")
 ]

@@ -26,4 +26,8 @@
   {% else %}
     <p>No products are available.</p>
   {% endif %}
+  {% if current_user %}
+  {% else %}
+    <a href="/sellers/register">Sign up for merchant account</a>
+  {% endif %}
 {% endblock %}
