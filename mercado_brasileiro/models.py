@@ -69,3 +69,7 @@ class Seller(models.Model):
 class CategoryNameTranslation(models.Model):
   category_name=models.CharField(max_length=200)
   category_name_english=models.CharField(max_length=200)
+
+class SellerUser(models.Model):
+  seller_uuid=models.CharField(max_length=50)
+  user_id=models.IntegerField()
