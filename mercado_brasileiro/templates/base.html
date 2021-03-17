@@ -1,14 +1,17 @@
+{% load static %}
 <html lang="en">
   <head>
     <title>Mercado Brasileiro</title>
     <!-- Bootstrap Assets -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="{% static 'mercado/example.css' %}" rel="stylesheet"></link>
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
-  <body>
+  <body id="mercado-body">
     <div id="content" class="container">
       {% block content %}{% endblock %}
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="{% static 'mercado/example.js' %}"></script>
   </body>
 </html>
