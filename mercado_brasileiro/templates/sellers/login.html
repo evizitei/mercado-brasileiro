@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Seller Login</h1>
+
+<p>
+  Use your username and password to access your seller account
+</p>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="input-group mb-3">
+  <form action="{% url 'sellers_auth' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <br/>
+    <input type="submit" value="Signup" class="btn btn-primary">
+  </form>
+</div>
+
+{% endblock %}
