@@ -6,12 +6,7 @@
     {% if seller %}
       <div class="card" style="width: 24rem;">
         <div class="card-body">
-          <h5 class="card-title">Seller {{ product.id }}</h5>
-          <h6 class="card-subtitle mb-2 text-muted"><strong>UUID:</strong> {{ product.product_uuid }}</h6>
-          <p class="card-text">
-            In the {{ product.category_name }} category, dimensions:
-            {{ product.length_in_cm }} x {{ product.width_in_cm }} x {{ product.height_in_cm }} (cm)
-          </p>
+          <h5 class="card-title">Seller {{ seller.seller_uuid }}</h5>
         </div>
       </div>
     {% else %}

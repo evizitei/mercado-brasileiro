@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, logout
+from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.http import HttpResponse
@@ -15,6 +15,8 @@ def products_index(request):
     products_list = Product.objects.order_by("id")[:10]
     template = loader.get_template('products/index.html')
     context = { 'products_list': products_list }
+    if request.user.is_authenticated:
+        context['current_user'] = request.user
     return HttpResponse(template.render(context, request))
 
 def products_show(request, product_id):
@@ -40,15 +42,17 @@ def sellers_authenticate(request):
         return render_login_form(request, form)
     username = form.cleaned_data['username']
     password = form.cleaned_data['password']
+    print("logging in with: ", username, password)
     user = authenticate(username=username, password=password)
-    if user is not None:
-        return render_login_form(request, form)
+    if user is None:
+        return render_login_form(request, form, error="Authentication Failed")
     else:
+        login(request, user)
         return redirect("sellers_profile")
 
 def sellers_logout(request):
     logout(request)
-    redirect("sellers_login")
+    return redirect("sellers_login")
 
 def sellers_profile(request):
     if not request.user.is_authenticated:
@@ -56,7 +60,7 @@ def sellers_profile(request):
     seller_user = SellerUser.objects.get(user_id=request.user.id)
     seller = Seller.objects.get(seller_uuid=seller_user.seller_uuid)
     template = loader.get_template('sellers/profile.html')
-    context = {'seller': form, 'user': request.user}
+    context = {'seller': seller, 'user': request.user}
     return HttpResponse(template.render(context, request))
 
 
@@ -72,7 +76,7 @@ def sellers_attach_user(request):
             email = form.cleaned_data['email']
             pw = form.cleaned_data['pw']
             with transaction.atomic():
-                user = User.objects.create_user(form.cleaned_data, email, pw)
+                user = User.objects.create_user(uname, email, pw)
                 user.save()
                 seller_user = SellerUser(
                     seller_uuid=seller.seller_uuid,
@@ -88,7 +92,7 @@ def render_registration_form(request, form):
     context = {'form': form}
     return HttpResponse(template.render(context, request))
 
-def render_login_form(request, form):
+def render_login_form(request, form, error=None):
     template = loader.get_template('sellers/login.html')
-    context = {'form': form}
+    context = {'form': form, 'auth_err': error}
     return HttpResponse(template.render(context, request))
