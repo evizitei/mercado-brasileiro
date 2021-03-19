@@ -31,3 +31,11 @@ const runtime = new Runtime();
 const main = runtime.module(define);
 main.value("foo").then(value => console.log(value));
 ~~~
+
+# Projection Code
+
+https://gist.github.com/LuisSevillano/0d0067c23463c95cc3b4d5f2633bdde0
+
+# Flaticons
+Perfume: https://www.freepik.com/
+
