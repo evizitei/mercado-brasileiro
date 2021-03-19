@@ -25,5 +25,9 @@ urlpatterns = [
     path('visualizations/', views.visualization, name="visualization")
     path('products/<int:product_id>', views.products_show, name="product_show"),
     path('sellers/register', views.sellers_register, name="sellers_register"),
-    path('sellers/attach', views.sellers_attach_user, name="sellers_attach_user")
+    path('sellers/attach', views.sellers_attach_user, name="sellers_attach_user"),
+    path('sellers/login', views.sellers_login, name="sellers_login"),
+    path('sellers/auth', views.sellers_authenticate, name="sellers_auth"),
+    path('sellers/profile', views.sellers_profile, name="sellers_profile"),
+    path('logout', views.sellers_logout, name="seller_logout")
 ]
