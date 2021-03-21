@@ -9,13 +9,16 @@
 </p>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% if auth_err %}<p><strong>{{ auth_err }}</strong></p>{% endif %}
 
 <div class="input-group mb-3">
   <form action="{% url 'sellers_auth' %}" method="post">
     {% csrf_token %}
     {{ form }}
     <br/>
-    <input type="submit" value="Signup" class="btn btn-primary">
+    <input type="submit" value="Login" class="btn btn-primary">
+    <br/>
+    <a href="/sellers/register">Sign up for merchant account</a>
   </form>
 </div>
 
