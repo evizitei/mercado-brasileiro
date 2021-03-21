@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template import loader
 
-from .models import Product, Seller, SellerUser GeoLocation
+from .models import Product, Seller, SellerUser, GeoLocation
 from .forms import RegistrationForm, LoginForm
 
 def index(request):
@@ -94,19 +94,7 @@ def render_registration_form(request, form):
     context = {'form': form}
     return HttpResponse(template.render(context, request))
 
-<<<<<<< HEAD
-    # Update fields and then save again
-    user.first_name = 'John'
-    user.last_name = 'Citizen'
-    user.save()
-||||||| merged common ancestors
-    # Update fields and then save again
-    user.first_name = 'John'
-    user.last_name = 'Citizen'
-    user.save()
-=======
 def render_login_form(request, form):
     template = loader.get_template('sellers/login.html')
     context = {'form': form}
     return HttpResponse(template.render(context, request))
->>>>>>> a8377dbd4190e41d018b602b0f143546812e20c9
