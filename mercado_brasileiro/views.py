@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template import loader
 
-from .models import Product, Seller, SellerUser
+from .models import OrderItem, Product, Seller, SellerUser
 from .forms import RegistrationForm, LoginForm
 
 def index(request):
@@ -59,8 +59,13 @@ def sellers_profile(request):
         return redirect("sellers_login")
     seller_user = SellerUser.objects.get(user_id=request.user.id)
     seller = Seller.objects.get(seller_uuid=seller_user.seller_uuid)
+    page_size = 10
+    page = int(request.GET.get('page') or 1)
+    order_offset_low = page_size * (page - 1)
+    order_offset_high = order_offset_low + page_size
+    order_items = OrderItem.objects.filter(seller_uuid=seller.seller_uuid)[order_offset_low:order_offset_high]
     template = loader.get_template('sellers/profile.html')
-    context = {'seller': seller, 'user': request.user}
+    context = {'seller': seller, 'user': request.user, 'order_items': order_items}
     return HttpResponse(template.render(context, request))
 
 
