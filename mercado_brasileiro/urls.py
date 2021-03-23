@@ -27,5 +27,6 @@ urlpatterns = [
     path('sellers/login', views.sellers_login, name="sellers_login"),
     path('sellers/auth', views.sellers_authenticate, name="sellers_auth"),
     path('sellers/profile', views.sellers_profile, name="sellers_profile"),
+    path('sellers/inventory', views.sellers_inventory, name="sellers_inventory"),
     path('logout', views.sellers_logout, name="seller_logout")
 ]

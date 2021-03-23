@@ -73,3 +73,29 @@ class CategoryNameTranslation(models.Model):
 class SellerUser(models.Model):
   seller_uuid=models.CharField(max_length=50)
   user_id=models.IntegerField()
+
+# This model is intended to represent
+# seller records regarding what they already
+# have in their inventory, and what is available
+# for them to buy.  there should be no records
+# that are neither owned nor available, and
+# owned/available should be mutually exclusive.
+# Down the line we can use these along with statistical
+# information from recent orders to optimize purchasing.
+class InventoryItem(models.Model):
+  seller_uuid=models.CharField(max_length=50)
+  product_uuid=models.CharField(max_length=50)
+  name=models.CharField(max_length=100)
+  owned=models.BooleanField()
+  available=models.BooleanField()
+  wholesale_unit_price=models.DecimalField(max_digits=12, decimal_places=2)
+  count=models.IntegerField()
+
+  @property
+  def inventory_status(self):
+    if self.owned:
+      return "OWNED"
+    elif self.available:
+      return "AVAILABLE"
+    else:
+      raise RuntimeError("Invalid Inventory State")

@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template import loader
 
-from .models import OrderItem, Product, Seller, SellerUser
+from .models import OrderItem, Product, Seller, SellerUser, InventoryItem
 from .forms import RegistrationForm, LoginForm
 
 def index(request):
@@ -68,6 +68,15 @@ def sellers_profile(request):
     context = {'seller': seller, 'user': request.user, 'order_items': order_items}
     return HttpResponse(template.render(context, request))
 
+def sellers_inventory(request):
+    if not request.user.is_authenticated:
+        return redirect("sellers_login")
+    seller_user = SellerUser.objects.get(user_id=request.user.id)
+    seller = Seller.objects.get(seller_uuid=seller_user.seller_uuid)
+    inventory_items = InventoryItem.objects.filter(seller_uuid=seller.seller_uuid).all()
+    template = loader.get_template('sellers/inventory.html')
+    context = {'seller': seller, 'user': request.user, 'inventory_items': inventory_items}
+    return HttpResponse(template.render(context, request))
 
 def sellers_attach_user(request):
     if request.method == 'POST':

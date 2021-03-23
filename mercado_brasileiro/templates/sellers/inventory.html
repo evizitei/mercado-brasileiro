@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Inventory for Seller {{ seller.seller_uuid}}</h1>
+  <div class="row gy-5">
+    {% if seller %}
+      <div class="card" style="width: 24rem;">
+        <div class="card-body">
+          <h5 class="card-title">Seller {{ seller.seller_uuid }}</h5>
+        </div>
+      </div>
+    {% else %}
+      <p>Seller not found...</p>
+    {% endif %}
+
+    {% if inventory_items %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Product ID</th>
+          <th>Product Name</th>
+          <th>Status</th>
+          <th>Unit Price</th>
+          <th>Count</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in inventory_items %}
+        <tr>
+          <th scope="row">{{item.product_uuid}}</th>
+          <td>{{item.name}}</td>
+          <td>{{item.inventory_status}}</td>
+          <td>{{item.wholesale_unit_price}}</td>
+          <td>{{item.count}}</td>
+          <td>
+            <a href="inventory/{{item.id}}/edit">edit</a>
+            <a href="inventory/{{item.id}}/destroy">delete</a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No inventory items are available.</p>
+    {% endif %}
+
+    <a href="/inventory/new">Add Inventory Item</a>
+    <a href="/logout">Logout</a>
+  </div>
+{% endblock %}
