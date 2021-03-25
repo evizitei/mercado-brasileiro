@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from django.template import loader
 
 from .models import OrderItem, Product, Seller, SellerUser, InventoryItem
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, InventoryItemForm
 
 def index(request):
     return HttpResponse("Hello, world. You're at the mercado-brasileiro app.")
@@ -77,6 +77,22 @@ def sellers_inventory(request):
     template = loader.get_template('sellers/inventory.html')
     context = {'seller': seller, 'user': request.user, 'inventory_items': inventory_items}
     return HttpResponse(template.render(context, request))
+
+def inventory_new(request):
+    if not request.user.is_authenticated:
+        return redirect("sellers_login")
+    template = loader.get_template('inventory/new.html')
+    form = InventoryItemForm()
+    context = { 'form': form }
+    return HttpResponse(template.render(context, request))
+
+def inventory_add(request):
+    if request.method != 'POST':
+        raise RuntimeError("Invalid Http Method")
+    elif not request.user.is_authenticated:
+        return redirect("sellers_login")
+    # todo: write inventory item to DB
+    return redirect("sellers_inventory")
 
 def sellers_attach_user(request):
     if request.method == 'POST':
