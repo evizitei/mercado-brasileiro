@@ -27,7 +27,7 @@
     <p>No products are available.</p>
   {% endif %}
   {% if current_user %}
-    <a href="/profile">See profile for {{current_user.username}}</a>
+    <a href="/sellers/profile">See profile for {{current_user.username}}</a>
     <a href="/logout">Logout</a>
   {% else %}
     <a href="/sellers/register">Sign up for merchant account</a>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Add an inventory item to your seller account</h1>
+
+<p>
+  If you know your merchant id (seller uuid),
+  you can use it to sign up for an account that can manage your orders here.
+</p>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="input-group mb-3">
+  <form action="{% url 'inventory_add' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <br/>
+    <input type="submit" value="Add Inventory Item" class="btn btn-primary">
+  </form>
+</div>
+
+{% endblock %}
