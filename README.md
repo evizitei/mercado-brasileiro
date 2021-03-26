@@ -51,6 +51,16 @@ And then you can run migrations to catch your curent
 python manage.py migrate
 ```
 
+You can also generate ARBITRARY migrations for anything you
+want (like adding indexes) by doing something like:
+
+```bash
+python manage.py makemigrations mercado_brasileiro --empty --name my_migration_name
+```
+
+Which will generate a pythong migraiton file where you can just fill in
+the sql you want to have run for that migration.
+
 ## Operational Environment
 
 This application is deployed on cpanel at http://mercadobrazil.web.illinois.edu/ .

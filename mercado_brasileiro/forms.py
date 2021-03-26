@@ -23,3 +23,12 @@ class RegistrationForm(forms.Form):
 class LoginForm(forms.Form):
   username = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }), label='username')
   password = forms.CharField(widget=forms.PasswordInput(attrs={'class': "form-control" }), label='password')
+
+INVENTORY_CHOICES = [('1', 'Owned'), ('2', 'Available')]
+
+class InventoryItemForm(forms.Form):
+  product_uuid=forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }),label='product_uuid')
+  name=forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }),label='name')
+  status=forms.ChoiceField(widget=forms.RadioSelect, choices=INVENTORY_CHOICES)
+  wholesale_unit_price=forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }),label='price')
+  count=forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }),label='count')

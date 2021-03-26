@@ -5,8 +5,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template import loader
 
-from .models import Product, Seller, SellerUser GeoLocation
-from .forms import RegistrationForm, LoginForm
+from .models import OrderItem, Product, Seller, SellerUser GeoLocation, InventoryItem
+from .forms import RegistrationForm, LoginForm, InventoryItemForm
 
 def index(request):
     return HttpResponse("Hello, world. You're at the mercado-brasileiro app.")
@@ -65,10 +65,40 @@ def sellers_profile(request):
         return redirect("sellers_login")
     seller_user = SellerUser.objects.get(user_id=request.user.id)
     seller = Seller.objects.get(seller_uuid=seller_user.seller_uuid)
+    page_size = 10
+    page = int(request.GET.get('page') or 1)
+    order_offset_low = page_size * (page - 1)
+    order_offset_high = order_offset_low + page_size
+    order_items = OrderItem.objects.filter(seller_uuid=seller.seller_uuid)[order_offset_low:order_offset_high]
     template = loader.get_template('sellers/profile.html')
-    context = {'seller': seller, 'user': request.user}
+    context = {'seller': seller, 'user': request.user, 'order_items': order_items}
     return HttpResponse(template.render(context, request))
 
+def sellers_inventory(request):
+    if not request.user.is_authenticated:
+        return redirect("sellers_login")
+    seller_user = SellerUser.objects.get(user_id=request.user.id)
+    seller = Seller.objects.get(seller_uuid=seller_user.seller_uuid)
+    inventory_items = InventoryItem.objects.filter(seller_uuid=seller.seller_uuid).all()
+    template = loader.get_template('sellers/inventory.html')
+    context = {'seller': seller, 'user': request.user, 'inventory_items': inventory_items}
+    return HttpResponse(template.render(context, request))
+
+def inventory_new(request):
+    if not request.user.is_authenticated:
+        return redirect("sellers_login")
+    template = loader.get_template('inventory/new.html')
+    form = InventoryItemForm()
+    context = { 'form': form }
+    return HttpResponse(template.render(context, request))
+
+def inventory_add(request):
+    if request.method != 'POST':
+        raise RuntimeError("Invalid Http Method")
+    elif not request.user.is_authenticated:
+        return redirect("sellers_login")
+    # todo: write inventory item to DB
+    return redirect("sellers_inventory")
 
 def sellers_attach_user(request):
     if request.method == 'POST':

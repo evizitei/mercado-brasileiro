@@ -12,6 +12,35 @@
     {% else %}
       <p>Seller not found...</p>
     {% endif %}
+
+    {% if order_items %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Item ID</th>
+          <th>Product ID</th>
+          <th>Shipping Date</th>
+          <th>Price</th>
+          <th>Freight Value</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in order_items %}
+        <tr>
+          <th scope="row">{{item.order_item_id}}</th>
+          <td>{{item.product_uuid}}</td>
+          <td>{{item.shipping_limit_date}}</td>
+          <td>{{item.price}}</td>
+          <td>{{item.freight_value}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No products are available.</p>
+    {% endif %}
+
+    <a href="/sellers/inventory">See Inventory</a>
     <a href="/logout">Logout</a>
   </div>
 {% endblock %}
