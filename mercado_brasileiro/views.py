@@ -7,6 +7,7 @@ from django.template import loader
 import pymongo
 import environ
 import os
+import psycopg2
 
 from .models import OrderItem, Product, Seller, SellerUser, GeoLocation, InventoryItem
 from .forms import RegistrationForm, LoginForm, InventoryItemForm
@@ -36,6 +37,12 @@ def visualization(request):
     print("Connecting to mongodb...")
     client = pymongo.MongoClient(env('MONGO_CONN_STRING'))
     mdb = client[env('MONGO_DB_NAME')]
+    db_conn = psycopg2.connect(
+    dbname=env('DATABASE_NAME'),
+    user=env('DATABASE_USER'),
+    host=env('DATABASE_HOST'),
+    password=env('DATABASE_PASS')
+    )
     analytics_collection = mdb.analytics
     if analytics_collection.count({}) > 0:
         print("...conn established.  Mongo already has records, looks fine.")
