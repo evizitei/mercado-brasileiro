@@ -32,5 +32,8 @@ urlpatterns = [
     path('sellers/inventory', views.sellers_inventory, name="sellers_inventory"),
     path('inventory/new', views.inventory_new, name="inventory_new"),
     path('inventory/add', views.inventory_add, name="inventory_add"),
+    path('inventory/<int:inventory_item_id>/destroy', views.inventory_destroy, name="inventory_destroy"),
+    path('inventory/<int:inventory_item_id>/edit', views.inventory_edit, name="inventory_edit"),
+    path('inventory/<int:inventory_item_id>/update', views.inventory_update, name="inventory_update"),
     path('logout', views.sellers_logout, name="seller_logout")
 ]
