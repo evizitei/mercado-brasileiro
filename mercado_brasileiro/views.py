@@ -4,8 +4,11 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template import loader
+import pymongo
+import environ
+import os
 
-from .models import OrderItem, Product, Seller, SellerUser GeoLocation, InventoryItem
+from .models import OrderItem, Product, Seller, SellerUser, GeoLocation, InventoryItem
 from .forms import RegistrationForm, LoginForm, InventoryItemForm
 
 def index(request):
@@ -26,6 +29,19 @@ def products_show(request, product_id):
     return HttpResponse(template.render(context, request))
 
 def visualization(request):
+    env = environ.Env()
+    base_dir = os.path.dirname(__file__) + "/../"
+    env_file = base_dir + "mercado_brasileiro/.env"
+    environ.Env.read_env(env_file)
+    print("Connecting to mongodb...")
+    client = pymongo.MongoClient(env('MONGO_CONN_STRING'))
+    mdb = client[env('MONGO_DB_NAME')]
+    analytics_collection = mdb.analytics
+    if analytics_collection.count({}) > 0:
+        print("...conn established.  Mongo already has records, looks fine.")
+    else:
+        analytics_collection.insert_one({"Test": "Document"})
+        print("...conn established and test document inserted!")
     location = GeoLocation.objects.order_by("zip_code_prefix")[:10]
     template = loader.get_template('visualizations/index.html')
     context = { 'location': location }
