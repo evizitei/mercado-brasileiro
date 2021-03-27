@@ -2,16 +2,16 @@
 
 {% block content %}
 
-<h1>Add an inventory item to your seller account</h1>
+<h1>Update Inventory Item: {{ inventory_item.name }}</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <div class="input-group mb-3">
-  <form action="{% url 'inventory_add' %}" method="post">
+  <form action="{% url 'inventory_update' inventory_item.id %}" method="post">
     {% csrf_token %}
     {{ form }}
     <br/>
-    <input type="submit" value="Add Inventory Item" class="btn btn-primary">
+    <input type="submit" value="Update Inventory Item" class="btn btn-primary">
   </form>
 </div>
 

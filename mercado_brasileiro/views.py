@@ -113,7 +113,87 @@ def inventory_add(request):
         raise RuntimeError("Invalid Http Method")
     elif not request.user.is_authenticated:
         return redirect("sellers_login")
-    # todo: write inventory item to DB
+    seller_user = SellerUser.objects.get(user_id=request.user.id)
+    seller = Seller.objects.get(seller_uuid=seller_user.seller_uuid)
+    form = InventoryItemForm(request.POST)
+    if form.is_valid():
+        status = form.cleaned_data['status']
+        item = InventoryItem(
+            seller_uuid=seller.seller_uuid,
+            product_uuid=form.cleaned_data["product_uuid"],
+            name=form.cleaned_data["name"],
+            owned=(status=="1"),
+            available=(status=="2"),
+            wholesale_unit_price=form.cleaned_data['wholesale_unit_price'],
+            count=form.cleaned_data['count']
+        )
+        item.save(force_insert=True)
+        return redirect("sellers_inventory")
+    else:
+        template = loader.get_template('inventory/new.html')
+        form = InventoryItemForm()
+        context = { 'form': form }
+        return HttpResponse(template.render(context, request))
+
+def inventory_edit(request, inventory_item_id):
+    if not request.user.is_authenticated:
+        return redirect("sellers_login")
+    item = InventoryItem.objects.get(pk=inventory_item_id)
+    seller_user = SellerUser.objects.get(user_id=request.user.id)
+    seller = Seller.objects.get(seller_uuid=seller_user.seller_uuid)
+    if not item.seller_uuid == seller.seller_uuid:
+        return HttpResponse('Unauthorized', status=401)
+    status = '1'
+    if item.available:
+        status = '2'
+    form = InventoryItemForm({
+        'product_uuid': item.product_uuid,
+        'name': item.name,
+        'status': status,
+        'wholesale_unit_price': item.wholesale_unit_price,
+        'cout': item.count
+    })
+    template = loader.get_template('inventory/edit.html')
+    form = InventoryItemForm()
+    context = { 'form': form, 'inventory_item': item }
+    return HttpResponse(template.render(context, request))
+
+def inventory_update(request, inventory_item_id):
+    if request.method != 'POST':
+        raise RuntimeError("Invalid Http Method")
+    elif not request.user.is_authenticated:
+        return redirect("sellers_login")
+    item = InventoryItem.objects.get(pk=inventory_item_id)
+    seller_user = SellerUser.objects.get(user_id=request.user.id)
+    seller = Seller.objects.get(seller_uuid=seller_user.seller_uuid)
+    if not item.seller_uuid == seller.seller_uuid:
+        return HttpResponse('Unauthorized', status=401)
+    form = InventoryItemForm(request.POST)
+    if form.is_valid():
+        status = form.cleaned_data['status']
+        item.product_uuid=form.cleaned_data["product_uuid"]
+        item.name=form.cleaned_data["name"]
+        item.owned=(status=="1")
+        item.available=(status=="2")
+        item.wholesale_unit_price=form.cleaned_data['wholesale_unit_price']
+        item.count=form.cleaned_data['count']
+        item.save()
+        return redirect("sellers_inventory")
+    else:
+        template = loader.get_template('inventory/edit.html')
+        form = InventoryItemForm()
+        context = { 'form': form }
+        return HttpResponse(template.render(context, request))
+
+def inventory_destroy(request, inventory_item_id):
+    if not request.user.is_authenticated:
+        return redirect("sellers_login")
+    item = InventoryItem.objects.get(pk=inventory_item_id)
+    seller_user = SellerUser.objects.get(user_id=request.user.id)
+    seller = Seller.objects.get(seller_uuid=seller_user.seller_uuid)
+    if not item.seller_uuid == seller.seller_uuid:
+        return HttpResponse('Unauthorized', status=401)
+    item.delete()
     return redirect("sellers_inventory")
 
 def sellers_attach_user(request):
