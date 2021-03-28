@@ -41,7 +41,7 @@ Estimated population by estado Data: [Kaggle Dataset](https://www.kaggle.com/oli
 
       const legend = svg.append("g")
         .attr("fill", "#777")
-        .attr("transform", "translate(915,608)")
+        .attr("transform", "translate(700,408)")
         .attr("text-anchor", "middle")
         .style("font", "10px sans-serif")
         .selectAll("g")
@@ -113,7 +113,7 @@ ${format(d.value)}`);
 
   main.variable(observer("projection")).define("projection", ["d3", "width", "height", "scale", "center"], function (d3, width, height, scale, center) {
     return (
-      d3.geoMercator().translate([width * 1.3, height / 6]).scale(800)
+      d3.geoMercator().translate([width, height / 10]).scale(600)
     )
   });
 
