@@ -158,10 +158,9 @@ def inventory_edit(request, inventory_item_id):
         'name': item.name,
         'status': status,
         'wholesale_unit_price': item.wholesale_unit_price,
-        'cout': item.count
+        'count': item.count
     })
     template = loader.get_template('inventory/edit.html')
-    form = InventoryItemForm()
     context = { 'form': form, 'inventory_item': item }
     return HttpResponse(template.render(context, request))
 
