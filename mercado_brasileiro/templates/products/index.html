@@ -2,6 +2,16 @@
 
 {% block content %}
   <h2>A bespoke and artisanal collection of products </h2>
+
+  <div class="input-group mb-3">
+    <form action="{% url 'products_search' %}" method="post">
+      {% csrf_token %}
+      {{ search_form }}
+      <br/>
+      <input type="submit" value="Search" class="btn btn-primary">
+    </form>
+  </div>
+
   {% if products_list %}
   <table class="table">
     <thead>
