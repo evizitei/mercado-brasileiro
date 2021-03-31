@@ -32,3 +32,6 @@ class InventoryItemForm(forms.Form):
   status=forms.ChoiceField(widget=forms.RadioSelect, choices=INVENTORY_CHOICES)
   wholesale_unit_price=forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }),label='price')
   count=forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }),label='count')
+
+class ProductSearchForm(forms.Form):
+  search_term = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }),label='Search Term')
