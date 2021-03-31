@@ -10,7 +10,7 @@ import os
 import psycopg2
 
 from .models import OrderItem, Product, Seller, SellerUser, GeoLocation, InventoryItem
-from .forms import RegistrationForm, LoginForm, InventoryItemForm
+from .forms import RegistrationForm, LoginForm, InventoryItemForm, ProductSearchForm
 
 def index(request):
     return HttpResponse("Hello, world. You're at the mercado-brasileiro app.")
@@ -18,9 +18,24 @@ def index(request):
 def products_index(request):
     products_list = Product.objects.order_by("id")[:10]
     template = loader.get_template('products/index.html')
-    context = { 'products_list': products_list }
+    form = ProductSearchForm()
+    context = { 'products_list': products_list, 'search_form': form }
     if request.user.is_authenticated:
         context['current_user'] = request.user
+    return HttpResponse(template.render(context, request))
+
+def products_search(request):
+    if request.method != 'POST':
+        return redirect("products_index")
+    form = ProductSearchForm(request.POST)
+    template = loader.get_template('products/index.html')
+    context = { 'products_list': [], 'search_form': form }
+    if request.user.is_authenticated:
+        context['current_user'] = request.user
+    if form.is_valid():
+        term = form.cleaned_data['search_term']
+        products_list = Product.objects.filter(category_name__icontains=term)
+        context['products_list'] = products_list[:10]
     return HttpResponse(template.render(context, request))
 
 def products_show(request, product_id):
