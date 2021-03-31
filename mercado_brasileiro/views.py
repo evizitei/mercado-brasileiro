@@ -43,15 +43,12 @@ def visualization(request):
     host=env('DATABASE_HOST'),
     password=env('DATABASE_PASS')
     )
-    analytics_collection = mdb.analytics
-    if analytics_collection.count({}) > 0:
-        print("...conn established.  Mongo already has records, looks fine.")
-    else:
-        analytics_collection.insert_one({"Test": "Document"})
-        print("...conn established and test document inserted!")
-    location = GeoLocation.objects.order_by("zip_code_prefix")[:10]
+    vis_collection = mdb['vis']
+    agg_data = vis_collection.aggregate([{"$match":{"category_name":"perfumaria","price":{"$lt":1000000},"price":{"$gt":0}}},{"$group":{"_id":"$customer_state","population":{"$sum":1}}},{"$project":{"_id":0,"population":"$population","estado": "$_id"}}])
+    context = {}
+    for doc in agg_data:
+        context[doc["estado"]] = doc["population"]
     template = loader.get_template('visualizations/index.html')
-    context = { 'location': location }
     return HttpResponse(template.render(context, request))
 
 

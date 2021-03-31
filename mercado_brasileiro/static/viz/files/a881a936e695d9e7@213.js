@@ -3,13 +3,6 @@ export default function define(runtime, observer) {
   const main = runtime.module();
   const fileAttachments = new Map([["counties-albers-10m.json", new URL("br-states.json", import.meta.url)], ["population.json", new URL("beb56a2d9534662123fa352ffff2db8472e481776fcc1608ee4adbd532ea9ccf2f1decc004d57adc76735478ee68c0fd18931ba01fc859ee4901deb1bee2ed1b", import.meta.url)]]);
   main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
-  main.variable(observer()).define(["md"], function (md) {
-    return (
-      md`# Brazil Product Customer Population
-
-Estimated population by estado Data: [Kaggle Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce?select=olist_geolocation_dataset.csv)`
-    )
-  });
   main.variable(observer("chart")).define("chart", ["d3", "topojson", "br", "path", "radius", "data", "format",
     "projection", "width", "height", "bounds", "center", "distance", "scale"],
     function (d3, topojson, br, path, radius, data, format, projection, width, height, bounds, center, distance, scale) {
@@ -80,8 +73,8 @@ ${format(d.value)}`);
   );
   main.variable(observer("data")).define("data", ["FileAttachment", "features", "path"], async function (FileAttachment, features, path) {
     return (
-      (await FileAttachment("population.json").json()).slice(1).map(([population, state, county]) => {
-        const id = county;
+      (await FileAttachment("population.json").json()).slice(1).map(([population, estado]) => {
+        const id = estado;
         const feature = features.get(id);
         return {
           id,
