@@ -103,3 +103,16 @@ class InventoryItem(models.Model):
       return "AVAILABLE"
     else:
       raise RuntimeError("Invalid Inventory State")
+
+class MerchantRanking(models.Model):
+  seller_id=models.IntegerField(primary_key=True)
+  review_count=models.IntegerField()
+  mean_score=models.FloatField()
+
+  @property
+  def formated_rank(self):
+    return "{:.2f}".format(self.mean_score)
+
+  class Meta:
+    managed = False
+    db_table = 'merchant_ranking'

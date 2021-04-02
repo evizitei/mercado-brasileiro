@@ -7,6 +7,9 @@
       <div class="card" style="width: 24rem;">
         <div class="card-body">
           <h5 class="card-title">Seller {{ seller.seller_uuid }}</h5>
+          <div class="card-body">
+            Ranking <strong>{{ ranking.formated_rank }}</strong> over {{ ranking.review_count }} reviews
+          </div>
         </div>
       </div>
     {% else %}
