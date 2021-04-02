@@ -8,7 +8,8 @@
         <div class="card-body">
           <h5 class="card-title">Seller {{ seller.seller_uuid }}</h5>
           <div class="card-body">
-            Ranking <strong>{{ ranking.formated_rank }}</strong> over {{ ranking.review_count }} reviews
+            Ranking <strong>{{ ranking.formated_rank }}</strong> over {{ ranking.review_count }} reviews.
+            Your percentile ranking? -> <strong>{{ ranking.nth_percentile }}</strong> !
           </div>
         </div>
       </div>
@@ -31,7 +32,7 @@
       <tbody>
       {% for item in order_items %}
         <tr>
-          <th scope="row">{{item.order_item_id}}</th>
+          <th scope="row">{{item.id}}</th>
           <td>{{item.product_uuid}}</td>
           <td>{{item.shipping_limit_date}}</td>
           <td>{{item.price}}</td>

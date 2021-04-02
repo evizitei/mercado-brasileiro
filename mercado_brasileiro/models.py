@@ -108,11 +108,16 @@ class MerchantRanking(models.Model):
   seller_id=models.IntegerField(primary_key=True)
   review_count=models.IntegerField()
   mean_score=models.FloatField()
+  percentile=models.FloatField()
 
   @property
   def formated_rank(self):
     return "{:.2f}".format(self.mean_score)
 
+  @property
+  def nth_percentile(self):
+    return int(self.percentile * 100)
+
   class Meta:
     managed = False
-    db_table = 'merchant_ranking'
+    db_table = 'merchant_rank_percentile'
