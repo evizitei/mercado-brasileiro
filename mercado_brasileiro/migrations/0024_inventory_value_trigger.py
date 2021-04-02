@@ -12,7 +12,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
         """
-        CREATE OR REPLACE PROCEDURE update_inventory_value(sid mercado_brasileiro_seller.seller_uuid%TYPE)
+        CREATE OR REPLACE FUNCTION update_inventory_value(sid mercado_brasileiro_seller.seller_uuid%TYPE)
+        RETURNS void
         LANGUAGE plpgsql
         AS $$
         BEGIN
@@ -39,12 +40,12 @@ class Migration(migrations.Migration):
         CREATE FUNCTION update_inventory_event() RETURNS trigger AS $update_inventory_event$
         BEGIN
             if TG_op = 'UPDATE' then
-              CALL update_inventory_value(OLD.seller_uuid);
-              CALL update_inventory_value(NEW.seller_uuid);
+              PERFORM update_inventory_value(OLD.seller_uuid);
+              PERFORM update_inventory_value(NEW.seller_uuid);
             elsif TG_op = 'INSERT' then
-              CALL update_inventory_value(NEW.seller_uuid);
+              PERFORM update_inventory_value(NEW.seller_uuid);
             elsif TG_op = 'DELETE' then
-              CALL update_inventory_value(OLD.seller_uuid);
+              PERFORM update_inventory_value(OLD.seller_uuid);
             end if;
             RETURN NEW;
         END;
