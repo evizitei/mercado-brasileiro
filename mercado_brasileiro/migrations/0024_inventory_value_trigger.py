@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL(
         """
-        CREATE FUNCTION update_inventory_event() RETURNS trigger AS $update_inventory_event$
+        CREATE OR REPLACE FUNCTION update_inventory_event() RETURNS trigger AS $update_inventory_event$
         BEGIN
             if TG_op = 'UPDATE' then
               PERFORM update_inventory_value(OLD.seller_uuid);
