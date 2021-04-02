@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Order Details for {{ order.order_uuid}}</h1>
+  <div class="row gy-5">
+    <h3>Order Items</h3>
+    {% if order_items %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Item ID</th>
+          <th>Product ID</th>
+          <th>Shipping Date</th>
+          <th>Price</th>
+          <th>Freight Value</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in order_items %}
+        <tr>
+          <th scope="row">{{item.order_item_id}}</th>
+          <td>{{item.product_uuid}}</td>
+          <td>{{item.shipping_limit_date}}</td>
+          <td>{{item.price}}</td>
+          <td>{{item.freight_value}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No items in this order.</p>
+    {% endif %}
+
+    <h3>Order Reviews</h3>
+    {% if order_items %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Review ID</th>
+          <th>Score</th>
+          <th>Title</th>
+          <th>Message</th>
+          <th>Creation Date</th>
+          <th>Answered At</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for review in reviews %}
+        <tr>
+          <th scope="row">{{review.review_uuid}}</th>
+          <td>{{review.review_score}}</td>
+          <td>{{review.review_comment_title}}</td>
+          <td>{{review.review_comment_message}}</td>
+          <td>{{review.review_creation_date}}</td>
+          <td>{{review.review_answer_timestamp}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No reviews for this order.</p>
+    {% endif %}
+    <br/>
+    <a href="{% url 'customers_profile' %}">Profile</a>
+    <br/>
+    <a href="/logout">Logout</a>
+  </div>
+{% endblock %}

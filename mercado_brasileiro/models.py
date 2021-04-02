@@ -74,6 +74,10 @@ class SellerUser(models.Model):
   seller_uuid=models.CharField(max_length=50)
   user_id=models.IntegerField()
 
+class CustomerUser(models.Model):
+  customer_unique_id=models.CharField(max_length=50)
+  user_id=models.IntegerField()
+
 # This model is intended to represent
 # seller records regarding what they already
 # have in their inventory, and what is available
