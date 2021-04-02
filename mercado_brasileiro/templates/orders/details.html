@@ -41,7 +41,6 @@
           <th>Title</th>
           <th>Message</th>
           <th>Creation Date</th>
-          <th>Answered At</th>
         </tr>
       </thead>
       <tbody>
@@ -52,7 +51,6 @@
           <td>{{review.review_comment_title}}</td>
           <td>{{review.review_comment_message}}</td>
           <td>{{review.review_creation_date}}</td>
-          <td>{{review.review_answer_timestamp}}</td>
         </tr>
       {% endfor %}
       </tbody>
@@ -60,6 +58,7 @@
     {% else %}
       <p>No reviews for this order.</p>
     {% endif %}
+    <a href="{% url 'write_review' order.id %}">Add review</a>
     <br/>
     <a href="{% url 'customers_profile' %}">Profile</a>
     <br/>

@@ -1,3 +1,6 @@
+from datetime import datetime
+import secrets
+
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -6,11 +9,10 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template import loader
 
-
 from .models import OrderItem, Product, Seller, SellerUser
 from .models import InventoryItem, Customer, CustomerUser, Order, OrderReview
 from .forms import RegistrationForm, LoginForm, InventoryItemForm, ProductSearchForm
-from .forms import CustomerRegistrationForm
+from .forms import CustomerRegistrationForm, ReviewForm
 
 def index(request):
     return HttpResponse("Hello, world. You're at the mercado-brasileiro app.")
@@ -314,6 +316,49 @@ def order_details(request, order_id):
     template = loader.get_template('orders/details.html')
     context = {'order': order, 'reviews': reviews, 'order_items': order_items}
     return HttpResponse(template.render(context, request))
+
+def write_review(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    user_map = load_user_objects(request)
+    if not user_map['user']:
+        print("NO USER, AUTH VIOLATION")
+        return redirect("customers_login")
+    cust_user = user_map['customer_user']
+    order_customer = Customer.objects.get(uuid=order.customer_uuid)
+    if cust_user.customer_unique_id != order_customer.unique_id:
+        print("INCORRECT USER, AUTH VIOLATION")
+        return redirect("customers_login")
+    form = ReviewForm()
+    context = { 'order': order, 'form': form }
+    template = loader.get_template('orders/review_form.html')
+    return HttpResponse(template.render(context, request))
+
+def post_review(request, order_id):
+    if request.method != 'POST':
+        return redirect("customers_profile")
+    order = Order.objects.get(pk=order_id)
+    user_map = load_user_objects(request)
+    if not user_map['user']:
+        print("NO USER, AUTH VIOLATION")
+        return redirect("customers_login")
+    cust_user = user_map['customer_user']
+    order_customer = Customer.objects.get(uuid=order.customer_uuid)
+    if cust_user.customer_unique_id != order_customer.unique_id:
+        print("INCORRECT USER, AUTH VIOLATION")
+        return redirect("customers_login")
+    form = ReviewForm(request.POST)
+    if form.is_valid():
+        review = OrderReview(
+            review_uuid=secrets.token_hex(16),
+            order_uuid = order.order_uuid,
+            review_score=int(form.cleaned_data['score']),
+            review_comment_title=form.cleaned_data['title'],
+            review_comment_message=form.cleaned_data['message'],
+            review_creation_date=datetime.now(),
+            review_answer_timestamp=datetime.now()
+        )
+        review.save(force_insert=True)
+    return redirect('order_details', order_id=order.id)
 
 def render_registration_form(request, form):
     template = loader.get_template('sellers/register.html')

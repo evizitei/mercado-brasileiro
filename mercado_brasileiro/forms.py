@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from .models import Product, Seller, Customer
+from .models import Product, Seller, Customer, OrderReview
 
 class RegistrationForm(forms.Form):
   name = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }), label='username')
@@ -51,3 +51,8 @@ class InventoryItemForm(forms.Form):
 
 class ProductSearchForm(forms.Form):
   search_term = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }),label='Search Term')
+
+class ReviewForm(forms.Form):
+  score=forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }),label='score (1-5)')
+  title=forms.CharField(widget=forms.TextInput(attrs={'class': "form-control" }),label='title')
+  message=forms.CharField(widget=forms.Textarea(attrs={'class': "form-control" }),label='message')
