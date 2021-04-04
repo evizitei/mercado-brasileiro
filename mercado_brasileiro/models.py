@@ -122,3 +122,21 @@ class MerchantRanking(models.Model):
   class Meta:
     managed = False
     db_table = 'merchant_rank_percentile'
+
+class OrderPredictedScore(models.Model):
+  order_uuid = models.CharField(max_length=50)
+  order_item_id = models.IntegerField()
+  product_uuid = models.CharField(max_length=50)
+  seller_uuid = models.CharField(max_length=50)
+  shipping_limit_date = models.DateTimeField()
+  price = models.DecimalField(max_digits=12, decimal_places=2)
+  freight_value= models.DecimalField(max_digits=12, decimal_places=2)
+  predicted_score= models.FloatField()
+
+  @property
+  def formated_rank(self):
+    return "{:.2f}".format(self.predicted_score)
+
+  class Meta:
+    managed = False
+    db_table = 'order_predicted_score'
