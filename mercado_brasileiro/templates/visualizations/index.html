@@ -7,18 +7,6 @@
 <link href="{% static 'viz/runtime.js' %}"> -->
 
 <body>
-    <h1>Brazil Product Customer Population</h1>
-    <div>Estimated population by estado Data: <a
-            href="https://www.kaggle.com/olistbr/brazilian-ecommerce?select=olist_geolocation_dataset.csv">Kaggle
-            Dataset</div>
-    <div class="input-group mb-3">
-        <form action="{% url 'visualization' %}" method="post">
-            {% csrf_token %}
-            <br />
-            <input type="submit" value="Update Map" class="btn btn-primary">
-            <br />
-        </form>
-    </div>
     <script type="module">
 
         import define from "{% static 'viz/index.js' %}";
