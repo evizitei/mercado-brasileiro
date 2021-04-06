@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.template import loader
 import pymongo
@@ -65,6 +65,28 @@ def visualization(request):
         context[doc["estado"]] = doc["population"]
     template = loader.get_template('visualizations/index.html')
     return HttpResponse(template.render(context, request))
+
+def visualization_update(request, product_type, price_min, price_max):
+    env = environ.Env()
+    base_dir = os.path.dirname(__file__) + "/../"
+    env_file = base_dir + "mercado_brasileiro/.env"
+    environ.Env.read_env(env_file)
+    print("Connecting to mongodb...")
+    client = pymongo.MongoClient(env('MONGO_CONN_STRING'))
+    mdb = client[env('MONGO_DB_NAME')]
+    db_conn = psycopg2.connect(
+    dbname=env('DATABASE_NAME'),
+    user=env('DATABASE_USER'),
+    host=env('DATABASE_HOST'),
+    password=env('DATABASE_PASS')
+    )
+    vis_collection = mdb['vis']
+    agg_data = vis_collection.aggregate([{"$match":{"category_name":product_type,"price":{"$lte":price_max},"price":{"$gte":price_min}}},{"$group":{"_id":"$customer_state","population":{"$sum":1}}},{"$project":{"_id":0,"population":"$population","estado": "$_id"}}])
+    context = {}
+    for doc in agg_data:
+        context[doc["estado"]] = doc["population"]
+    print(context)
+    return JsonResponse(context)
 
 
 def sellers_register(request):

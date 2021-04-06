@@ -11,8 +11,8 @@ Estimated population by estado Data: [Kaggle Dataset](https://www.kaggle.com/oli
     )
   });
   main.variable(observer("chart")).define("chart", ["d3", "topojson", "br", "path", "radius", "data", "format",
-    "projection", "width", "height", "bounds", "center", "distance", "scale"],
-    function (d3, topojson, br, path, radius, data, format, projection, width, height, bounds, center, distance, scale) {
+    "projection", "width", "height", "bounds", "center", "distance", "scale", "product_type", "price_min", "price_max"],
+    function (d3, topojson, br, path, radius, data, format, projection, width, height, bounds, center, distance, scale, product_type, price_max, price_min) {
       const svg = d3.create("svg")
         .attr("viewBox", [0, 0, width, height]);
 
@@ -78,21 +78,45 @@ ${format(d.value)}`);
       return svg.node();
     }
   );
-  main.variable(observer("data")).define("data", ["FileAttachment", "features", "path"], async function (FileAttachment, features, path) {
+  main.variable(observer("data")).define("data", ["FileAttachment", "features", "path", "product_type", "price_min", "price_max"], async function (FileAttachment, features, path, product_type, price_min, price_max) {
+    const response = await fetch(product_type + "/" + price_min + "/" + price_max + "/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    var arr = [];
+    const data = response.json();
+    var datum = await data;
+    for (var estado in datum) {
+      var id = estado;
+      var feature = features.get(id);
+      var num = parseInt(datum[estado]);
+      arr.push({
+        id,
+        position: feature && path.centroid(feature),
+        title: feature && feature.properties.nome,
+        value: +num
+      });
+    };
+    console.log(arr);
+    return arr;
+  });
+  main.variable(observer("product_type")).define("product_type", [], function () {
     return (
-      (await FileAttachment("population.json").json()).slice(1).map(([population, estado]) => {
-        const id = estado;
-        const feature = features.get(id);
-        return {
-          id,
-          position: feature && path.centroid(feature),
-          title: feature && feature.properties.nome,
-          value: +population
-        };
-      })
+      "perfumaria"
     )
   });
-
+  main.variable(observer("price_min")).define("price_min", [], function () {
+    return (
+      0
+    )
+  });
+  main.variable(observer("price_max")).define("price_max", [], function () {
+    return (
+      1000000
+    )
+  });
   main.variable(observer("radius")).define("radius", ["d3", "data"], function (d3, data) {
     return (
       d3.scaleSqrt([0, d3.max(data, d => d.value)], [0, 30])
