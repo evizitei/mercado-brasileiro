@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Customer Account</h1>
+
+<p>
+  If you know your customer id (uuid),
+  you can use it to sign up for an account that can manage your orders and reviews here.
+</p>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="input-group mb-3">
+  <form action="{% url 'customer_attach_user' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <br/>
+    <input type="submit" value="Signup" class="btn btn-primary">
+  </form>
+</div>
+
+{% endblock %}

@@ -65,6 +65,7 @@ class Seller(models.Model):
   zip_code_prefix=models.CharField(max_length=12)
   city=models.CharField(max_length=50)
   state=models.CharField(max_length=30)
+  inventory_value=models.DecimalField(max_digits=15, decimal_places=2, default=0.0)
 
 class CategoryNameTranslation(models.Model):
   category_name=models.CharField(max_length=200)
@@ -72,6 +73,10 @@ class CategoryNameTranslation(models.Model):
 
 class SellerUser(models.Model):
   seller_uuid=models.CharField(max_length=50)
+  user_id=models.IntegerField()
+
+class CustomerUser(models.Model):
+  customer_unique_id=models.CharField(max_length=50)
   user_id=models.IntegerField()
 
 # This model is intended to represent
@@ -99,3 +104,21 @@ class InventoryItem(models.Model):
       return "AVAILABLE"
     else:
       raise RuntimeError("Invalid Inventory State")
+
+class MerchantRanking(models.Model):
+  seller_id=models.IntegerField(primary_key=True)
+  review_count=models.IntegerField()
+  mean_score=models.FloatField()
+  percentile=models.FloatField()
+
+  @property
+  def formated_rank(self):
+    return "{:.2f}".format(self.mean_score)
+
+  @property
+  def nth_percentile(self):
+    return int(self.percentile * 100)
+
+  class Meta:
+    managed = False
+    db_table = 'merchant_rank_percentile'

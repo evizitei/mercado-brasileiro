@@ -36,11 +36,21 @@
   {% else %}
     <p>No products are available.</p>
   {% endif %}
-  {% if current_user %}
-    <a href="/sellers/profile">See profile for {{current_user.username}}</a>
+  {% if seller_user %}
+    <a href="/sellers/profile">See merchant profile for {{current_user.username}}</a>
+    <br/>
+    <a href="/logout">Logout</a>
+  {% elif customer_user %}
+    <a href="/customers/profile">See customer profile for {{current_user.username}}</a>
+    <br/>
     <a href="/logout">Logout</a>
   {% else %}
     <a href="/sellers/register">Sign up for merchant account</a>
+    <br/>
     <a href="/sellers/login">Login as merchant</a>
+    <br/>
+    <a href="/customers/register">Sign up for customer account</a>
+    <br/>
+    <a href="/customers/login">Login as customer</a>
   {% endif %}
 {% endblock %}
