@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Customer Login</h1>
+
+<p>
+  Use your username and password to access your customer account
+</p>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% if auth_err %}<p><strong>{{ auth_err }}</strong></p>{% endif %}
+
+<div class="input-group mb-3">
+  <form action="{% url 'customers_auth' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <br/>
+    <input type="submit" value="Login" class="btn btn-primary">
+    <br/>
+    <a href="/customers/register">Sign up for customer account</a>
+  </form>
+</div>
+
+{% endblock %}

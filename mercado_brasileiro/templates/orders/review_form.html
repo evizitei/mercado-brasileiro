@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Review for Order {{order.id}}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% if auth_err %}<p><strong>{{ auth_err }}</strong></p>{% endif %}
+
+<div class="input-group mb-3">
+  <form action="{% url 'post_review' order.id %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <br/>
+    <input type="submit" value="Submit Review" class="btn btn-primary">
+  </form>
+</div>
+
+{% endblock %}
