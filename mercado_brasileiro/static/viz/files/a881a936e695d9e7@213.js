@@ -3,16 +3,9 @@ export default function define(runtime, observer) {
   const main = runtime.module();
   const fileAttachments = new Map([["br.json", new URL("br-states.json", import.meta.url)], ["population.json", new URL("beb56a2d9534662123fa352ffff2db8472e481776fcc1608ee4adbd532ea9ccf2f1decc004d57adc76735478ee68c0fd18931ba01fc859ee4901deb1bee2ed1b", import.meta.url)]]);
   main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
-  main.variable(observer()).define(["md"], function (md) {
-    return (
-      md`# Brazil Product Customer Population
-
-Estimated population by estado Data: [Kaggle Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce?select=olist_geolocation_dataset.csv)`
-    )
-  });
   main.variable(observer("chart")).define("chart", ["d3", "topojson", "br", "path", "radius", "data", "format",
-    "projection", "width", "height", "bounds", "center", "distance", "scale", "product_type", "price_min", "price_max"],
-    function (d3, topojson, br, path, radius, data, format, projection, width, height, bounds, center, distance, scale, product_type, price_max, price_min) {
+    "projection", "width", "height", "bounds", "center", "distance", "scale", "product_type", "min_price", "max_price"],
+    function (d3, topojson, br, path, radius, data, format, projection, width, height, bounds, center, distance, scale, product_type, max_price, min_price) {
       const svg = d3.create("svg")
         .attr("viewBox", [0, 0, width, height]);
 
@@ -75,11 +68,15 @@ Estimated population by estado Data: [Kaggle Dataset](https://www.kaggle.com/oli
         .text(d => `${d.title}
 ${format(d.value)}`);
 
+      // Listen to the button -> update if user change it
+      d3.select("#update_page").on("click", function () {
+        window.location.href = "//" + location.host + "/visualizations/" + document.getElementById("product_type").value + "/" + document.getElementById("min_price").value + "/" + document.getElementById("max_price").value + "/update";
+      })
       return svg.node();
     }
   );
-  main.variable(observer("data")).define("data", ["FileAttachment", "features", "path", "product_type", "price_min", "price_max"], async function (FileAttachment, features, path, product_type, price_min, price_max) {
-    const response = await fetch(product_type + "/" + price_min + "/" + price_max + "/", {
+  main.variable(observer("data")).define("data", ["FileAttachment", "features", "path", "product_type", "min_price", "max_price"], async function (FileAttachment, features, path, product_type, min_price, max_price) {
+    const response = await fetch("//" + location.host + "/visualizations/" + product_type + "/" + min_price + "/" + max_price + "/api", {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
@@ -104,17 +101,17 @@ ${format(d.value)}`);
   });
   main.variable(observer("product_type")).define("product_type", [], function () {
     return (
-      "perfumaria"
+      document.getElementById("product_type").value
     )
   });
-  main.variable(observer("price_min")).define("price_min", [], function () {
+  main.variable(observer("min_price")).define("min_price", [], function () {
     return (
-      0
+      parseInt(document.getElementById("min_price").value)
     )
   });
-  main.variable(observer("price_max")).define("price_max", [], function () {
+  main.variable(observer("max_price")).define("max_price", [], function () {
     return (
-      1000000
+      parseInt(document.getElementById("max_price").value)
     )
   });
   main.variable(observer("radius")).define("radius", ["d3", "data"], function (d3, data) {

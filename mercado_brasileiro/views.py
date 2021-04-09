@@ -82,14 +82,16 @@ def visualization(request):
     password=env('DATABASE_PASS')
     )
     vis_collection = mdb['vis']
-    agg_data = vis_collection.aggregate([{"$match":{"category_name":"perfumaria","price":{"$lt":1000000},"price":{"$gt":0}}},{"$group":{"_id":"$customer_state","population":{"$sum":1}}},{"$project":{"_id":0,"population":"$population","estado": "$_id"}}])
+    agg_data = vis_collection.distinct("category_name")
     context = {}
-    for doc in agg_data:
-        context[doc["estado"]] = doc["population"]
+    context["product_type"] = "perfumaria"
+    context["price_min"] = 0
+    context["price_max"] = 400  
+    context["all_products"] = agg_data
     template = loader.get_template('visualizations/index.html')
     return HttpResponse(template.render(context, request))
 
-def visualization_update(request, product_type, price_min, price_max):
+def visualization_api(request, product_type, price_min, price_max):
     env = environ.Env()
     base_dir = os.path.dirname(__file__) + "/../"
     env_file = base_dir + "mercado_brasileiro/.env"
@@ -111,6 +113,29 @@ def visualization_update(request, product_type, price_min, price_max):
     print(context)
     return JsonResponse(context)
 
+def visualization_update(request, product_type, price_min, price_max):
+    env = environ.Env()
+    base_dir = os.path.dirname(__file__) + "/../"
+    env_file = base_dir + "mercado_brasileiro/.env"
+    environ.Env.read_env(env_file)
+    print("Connecting to mongodb...")
+    client = pymongo.MongoClient(env('MONGO_CONN_STRING'))
+    mdb = client[env('MONGO_DB_NAME')]
+    db_conn = psycopg2.connect(
+    dbname=env('DATABASE_NAME'),
+    user=env('DATABASE_USER'),
+    host=env('DATABASE_HOST'),
+    password=env('DATABASE_PASS')
+    )
+    vis_collection = mdb['vis']
+    agg_data = vis_collection.distinct("category_name")
+    context = {}
+    context["all_products"] = agg_data
+    context["product_type"] = product_type
+    context["price_min"] = price_min
+    context["price_max"] = price_max
+    template = loader.get_template('visualizations/index.html')
+    return HttpResponse(template.render(context, request))
 
 def sellers_register(request):
     return render_registration_form(request, RegistrationForm())

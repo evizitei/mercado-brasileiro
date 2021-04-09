@@ -39,3 +39,6 @@ https://gist.github.com/LuisSevillano/0d0067c23463c95cc3b4d5f2633bdde0
 # Flaticons
 Perfume: https://www.freepik.com/
 
+# Dropdown
+
+https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown_filter
