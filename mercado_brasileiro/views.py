@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template import loader
 
-from .models import OrderItem, Product, Seller, SellerUser, MerchantRanking, OrderPredictedScore
+from .models import OrderItem, Product, Seller, SellerUser, MerchantRanking, OrderPredictedSatisfaction
 from .models import InventoryItem, Customer, CustomerUser, Order, OrderReview
 from .forms import RegistrationForm, LoginForm, InventoryItemForm, ProductSearchForm
 from .forms import CustomerRegistrationForm, ReviewForm
@@ -145,14 +145,14 @@ def sellers_profile(request):
     order_offset_low = page_size * (page - 1)
     order_offset_high = order_offset_low + page_size
     order_items = OrderItem.objects.filter(seller_uuid=seller.seller_uuid)[order_offset_low:order_offset_high]
-    order_predicted_score = OrderPredictedScore.objects.filter(seller_uuid=seller.seller_uuid)[order_offset_low:order_offset_high]
+    order_predicted_satisfaction = OrderPredictedSatisfaction.objects.filter(seller_uuid=seller.seller_uuid)[order_offset_low:order_offset_high]
     template = loader.get_template('sellers/profile.html')
     ranking = None
     try:
         ranking = MerchantRanking.objects.get(seller_id=seller.id)
     except ObjectDoesNotExist:
         print("Ranking not computed for this seller yet")
-    context = {'seller': seller, 'user': request.user, 'order_items': order_items, 'order_predicted_score': order_predicted_score, 'ranking': ranking}
+    context = {'seller': seller, 'user': request.user, 'order_items': order_items, 'order_predicted_satisfaction': order_predicted_satisfaction, 'ranking': ranking}
     return HttpResponse(template.render(context, request))
 
 def sellers_inventory(request):

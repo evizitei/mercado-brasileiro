@@ -87,6 +87,7 @@ from mercado_brasileiro.models import Order
 from mercado_brasileiro.models import Product
 from mercado_brasileiro.models import Seller
 from mercado_brasileiro.models import CategoryNameTranslation
+from mercado_brasileiro.models import OrderPredictedSatisfaction
 
 csv_dir = extract_dir
 
@@ -228,6 +229,22 @@ def import_category_name_translations():
     )
     new_object.save(force_insert=True)
 
+def import_order_predicted_satisfaction():
+  for row in import_model(OrderPredictedSatisfaction, csv_dir + "/order_predicted_satisfaction.csv", "order_id"):
+    new_object = OrderPredictedSatisfaction(
+      order_uuid=row[0],
+      customer_uuid=row[1],
+      status=row[2],
+      purchase_timestamp=parse_datetime(row[3]),
+      approved_at=parse_datetime(row[4]),
+      carrier_date=parse_datetime(row[5]),
+      delivered_customer_date=parse_datetime(row[6]),
+      estimated_delivery_date=parse_datetime(row[7]),
+      predicted_satisfaction=int(float(row[8])),
+      seller_uuid=row[9]
+    )
+    new_object.save(force_insert=True)
+
 import_customers()
 import_geolocations()
 import_order_items()
@@ -237,7 +254,7 @@ import_orders()
 import_products()
 import_sellers()
 import_category_name_translations()
-
+import_order_predicted_satisfaction()
 
 print("Postgres Database Initialization Complete")
 
