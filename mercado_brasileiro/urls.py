@@ -42,5 +42,8 @@ urlpatterns = [
     path('orders/<int:order_id>/detail', views.order_details, name="order_details"),
     path('orders/<int:order_id>/reviews/write', views.write_review, name="write_review"),
     path('orders/<int:order_id>/reviews/post', views.post_review, name="post_review"),
-    path('logout', views.logout_action, name="logout")
+    path('logout', views.logout_action, name="logout"),
+    path('visualizations/', views.visualization, name="visualization"),
+    path('visualizations/<str:product_type>/<int:price_min>/<int:price_max>/update', views.visualization_update, name="visualization_update"),
+    path('visualizations/<str:product_type>/<int:price_min>/<int:price_max>/api', views.visualization_api, name="visualization_api")
 ]

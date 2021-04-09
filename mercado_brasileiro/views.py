@@ -5,9 +5,13 @@ from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction, connection
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.template import loader
+import pymongo
+import environ
+import os
+import psycopg2
 
 from .models import OrderItem, Product, Seller, SellerUser, MerchantRanking
 from .models import InventoryItem, Customer, CustomerUser, Order, OrderReview
@@ -48,7 +52,6 @@ def products_show(request, product_id):
     context = { 'product': product }
     return HttpResponse(template.render(context, request))
 
-
 def customers_register(request):
     return render_cust_registration_form(request, CustomerRegistrationForm())
 
@@ -72,14 +75,10 @@ def customers_authenticate(request):
 
 def sellers_login(request):
     form = LoginForm()
-    return render_cust_login_form(request, form)
+    return render_login_form(request, form)
 
 def sellers_register(request):
     return render_registration_form(request, RegistrationForm())
-
-def sellers_login(request):
-    form = LoginForm()
-    return render_login_form(request, form)
 
 def sellers_authenticate(request):
     if request.method != 'POST':
@@ -320,6 +319,76 @@ def order_details(request, order_id):
     reviews = OrderReview.objects.filter(order_uuid=order.order_uuid)
     template = loader.get_template('orders/details.html')
     context = {'order': order, 'reviews': reviews, 'order_items': order_items}
+    return HttpResponse(template.render(context, request))
+
+def visualization(request):
+    env = environ.Env()
+    base_dir = os.path.dirname(__file__) + "/../"
+    env_file = base_dir + "mercado_brasileiro/.env"
+    environ.Env.read_env(env_file)
+    print("Connecting to mongodb...")
+    client = pymongo.MongoClient(env('MONGO_CONN_STRING'))
+    mdb = client[env('MONGO_DB_NAME')]
+    db_conn = psycopg2.connect(
+    dbname=env('DATABASE_NAME'),
+    user=env('DATABASE_USER'),
+    host=env('DATABASE_HOST'),
+    password=env('DATABASE_PASS')
+    )
+    vis_collection = mdb['vis']
+    agg_data = vis_collection.distinct("category_name")
+    context = {}
+    context["product_type"] = "perfumaria"
+    context["price_min"] = 0
+    context["price_max"] = 400  
+    context["all_products"] = agg_data
+    template = loader.get_template('visualizations/index.html')
+    return HttpResponse(template.render(context, request))
+
+def visualization_api(request, product_type, price_min, price_max):
+    env = environ.Env()
+    base_dir = os.path.dirname(__file__) + "/../"
+    env_file = base_dir + "mercado_brasileiro/.env"
+    environ.Env.read_env(env_file)
+    print("Connecting to mongodb...")
+    client = pymongo.MongoClient(env('MONGO_CONN_STRING'))
+    mdb = client[env('MONGO_DB_NAME')]
+    db_conn = psycopg2.connect(
+    dbname=env('DATABASE_NAME'),
+    user=env('DATABASE_USER'),
+    host=env('DATABASE_HOST'),
+    password=env('DATABASE_PASS')
+    )
+    vis_collection = mdb['vis']
+    agg_data = vis_collection.aggregate([{"$match":{"category_name":product_type,"price":{"$lte":price_max},"price":{"$gte":price_min}}},{"$group":{"_id":"$customer_state","population":{"$sum":1}}},{"$project":{"_id":0,"population":"$population","estado": "$_id"}}])
+    context = {}
+    for doc in agg_data:
+        context[doc["estado"]] = doc["population"]
+    print(context)
+    return JsonResponse(context)
+
+def visualization_update(request, product_type, price_min, price_max):
+    env = environ.Env()
+    base_dir = os.path.dirname(__file__) + "/../"
+    env_file = base_dir + "mercado_brasileiro/.env"
+    environ.Env.read_env(env_file)
+    print("Connecting to mongodb...")
+    client = pymongo.MongoClient(env('MONGO_CONN_STRING'))
+    mdb = client[env('MONGO_DB_NAME')]
+    db_conn = psycopg2.connect(
+    dbname=env('DATABASE_NAME'),
+    user=env('DATABASE_USER'),
+    host=env('DATABASE_HOST'),
+    password=env('DATABASE_PASS')
+    )
+    vis_collection = mdb['vis']
+    agg_data = vis_collection.distinct("category_name")
+    context = {}
+    context["all_products"] = agg_data
+    context["product_type"] = product_type
+    context["price_min"] = price_min
+    context["price_max"] = price_max
+    template = loader.get_template('visualizations/index.html')
     return HttpResponse(template.render(context, request))
 
 def write_review(request, order_id):

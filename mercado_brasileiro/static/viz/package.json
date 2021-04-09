@@ -1,0 +1,14 @@
+{
+  "name": "@d3/bubble-map",
+  "main": "a881a936e695d9e7@213.js",
+  "version": "213.0.0",
+  "homepage": "https://observablehq.com/@d3/bubble-map",
+  "author": {
+    "name": "D3",
+    "url": "https://observablehq.com/@d3"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4"
+  }
+}

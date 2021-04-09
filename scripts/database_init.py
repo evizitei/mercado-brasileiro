@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime
+from django.db import connection
 from django.utils import timezone
 from decimal import *
 import environ
@@ -242,6 +243,28 @@ import_category_name_translations()
 print("Postgres Database Initialization Complete")
 
 # MONGODB Initialization
+query = '''SELECT customer.state AS customer_state, CAST(order_item.price AS float), seller.state AS seller_state, product.category_name  
+FROM mercado_brasileiro_customer customer
+JOIN mercado_brasileiro_order orders
+ON customer.uuid = orders.customer_uuid
+JOIN mercado_brasileiro_orderitem order_item
+ON orders.order_uuid = order_item.order_uuid
+JOIN mercado_brasileiro_seller seller
+ON order_item.seller_uuid = seller.seller_uuid
+JOIN mercado_brasileiro_product product
+ON order_item.product_uuid = product.product_uuid'''
+
+cursor = connection.cursor()
+cursor.execute(query)
+def dictfetchall(cursor):
+    "Return all rows from a cursor as a dict"
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
+mongo_data = dictfetchall(cursor)
+
 print("Connecting to mongodb...")
 client = pymongo.MongoClient(env('MONGO_CONN_STRING'))
 mdb = client[env('MONGO_DB_NAME')]
@@ -251,6 +274,14 @@ if analytics_collection.count({}) > 0:
 else:
   analytics_collection.insert_one({"Test": "Document"})
   print("...conn established and test document inserted!")
+
+vis_collection = mdb['vis']
+if vis_collection.count({}) > 0:
+  print("...conn established.  Mongo already has records, looks fine.")
+else:
+  for datum in mongo_data:
+    vis_collection.insert_one(datum)
+  print("...conn established and all documents insterted!")
 
 # making sure we have a SUPER user for admin
 from django.contrib.auth.models import User
