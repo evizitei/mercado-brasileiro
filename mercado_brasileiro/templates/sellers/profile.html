@@ -47,6 +47,34 @@
       <p>No products are available.</p>
     {% endif %}
 
+    <h3>My Orders with Predicted Customer Satisfaction</h3>
+    {% if order_predicted_satisfaction %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer ID</th>
+          <th>Order Status</th>
+          <th>Purchase Timestamp</th>
+          <th>Predicted Customer Satisfaction</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in order_predicted_satisfaction %}
+        <tr>
+          <td>{{item.order_uuid}}</td>
+          <td>{{item.customer_uuid}}</td>
+          <td>{{item.status}}</td>
+          <td>{{item.purchase_timestamp}}</td>
+          <td>{{item.predicted_satisfaction}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No products are available.</p>
+    {% endif %}
+
     <a href="/sellers/inventory">See Inventory</a>
     <a href="/logout">Logout</a>
   </div>

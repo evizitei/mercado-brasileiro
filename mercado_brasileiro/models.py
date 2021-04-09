@@ -122,3 +122,15 @@ class MerchantRanking(models.Model):
   class Meta:
     managed = False
     db_table = 'merchant_rank_percentile'
+
+class OrderPredictedSatisfaction(models.Model):
+  order_uuid=models.CharField(max_length=50)
+  customer_uuid=models.CharField(max_length=50)
+  status=models.CharField(max_length=50)
+  purchase_timestamp=models.DateTimeField()
+  approved_at=models.DateTimeField(default=None, blank=True, null=True)
+  carrier_date=models.DateTimeField(default=None, blank=True, null=True)
+  delivered_customer_date=models.DateTimeField(default=None, blank=True, null=True)
+  estimated_delivery_date=models.DateTimeField()
+  predicted_satisfaction= models.IntegerField()
+  seller_uuid = models.CharField(max_length=50)
