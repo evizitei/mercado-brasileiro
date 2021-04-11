@@ -12,6 +12,7 @@ import pymongo
 import environ
 import os
 import psycopg2
+import re
 
 from .models import OrderItem, Product, Seller, SellerUser, MerchantRanking, OrderPredictedSatisfaction
 from .models import InventoryItem, Customer, CustomerUser, Order, OrderReview
@@ -361,7 +362,7 @@ def visualization_api(request, product_type, price_min, price_max):
     password=env('DATABASE_PASS')
     )
     vis_collection = mdb['vis']
-    agg_data = vis_collection.aggregate([{"$match":{"category_name":product_type,"price":{"$lte":price_max},"price":{"$gte":price_min}}},{"$group":{"_id":"$customer_state","population":{"$sum":1}}},{"$project":{"_id":0,"population":"$population","estado": "$_id"}}])
+    agg_data = vis_collection.aggregate([{"$match":{"category_name":product_type,"price":{"$lte":price_max}}},{"$match":{"price":{"$gte":price_min}}},{"$group":{"_id":"$customer_state","population":{"$sum":1}}},{"$project":{"_id":0,"population":"$population","estado": "$_id"}}])
     context = {}
     for doc in agg_data:
         context[doc["estado"]] = doc["population"]
@@ -383,6 +384,8 @@ def visualization_update(request, product_type, price_min, price_max):
     password=env('DATABASE_PASS')
     )
     vis_collection = mdb['vis']
+    if (re.match("\'|\"|\\|\;|\{|\}",product_type)):
+        return visualization(request)
     agg_data = vis_collection.distinct("category_name")
     context = {}
     context["all_products"] = agg_data
